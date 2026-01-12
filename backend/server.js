@@ -5,12 +5,17 @@ import connectDB from "./connection/db.js";
 import userRouter from "./routes/userRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
+import cors from "cors";
+
+// ENABLE CORS FOR ALL ROUTES
 
 
 dotenv.config();
 connectDB();
 
 const app = express();
+app.use(cors());
+
 const port = process.env.PORT || 8080;
 
 // MIDDLEWARE TO PARSE JSON REQUESTS
