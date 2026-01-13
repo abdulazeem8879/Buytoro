@@ -9,6 +9,7 @@ import Order from "./pages/Order";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Checkout from "./pages/CheckOut";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
 
       {/* protected routes */}
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
       <Route path="/order/:id" element={<ProtectedRoute><Order /></ProtectedRoute>} />
     </Routes>
   );
