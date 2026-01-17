@@ -22,10 +22,12 @@ const productSchema = new mongoose.Schema(
       type: String,
     },
 
-    image: {
-      type: String,
-      required: true, // image URL
-    },
+  images: [
+  {
+    type: String,
+    required: true,
+  },
+],
 
     inStock: {
       type: Boolean,

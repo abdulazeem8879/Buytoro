@@ -10,6 +10,12 @@ import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Checkout from "./pages/CheckOut";
+import AdminRoute from "./admin/AdminRoute";
+import AdminLayout from "./admin/AdminLayout";
+import AdminDashboard from "./admin/pages/AdminDashboard";
+import AdminProductList from "./admin/pages/AdminProductList";
+import AdminAddProduct from "./admin/pages/AdminAddProduct";
+import AdminEditProduct from "./admin/pages/AdminEditProduct";
 
 const App = () => {
   return (
@@ -24,6 +30,16 @@ const App = () => {
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
       <Route path="/order/:id" element={<ProtectedRoute><Order /></ProtectedRoute>} />
+
+      {/* admin routes */}
+          <Route path="/admin" element={<AdminRoute> <AdminLayout /> </AdminRoute>}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="products" element={<AdminProductList />} />
+        <Route path="products/add" element={<AdminAddProduct />} />
+        <Route path="products/:id/edit" element={<AdminEditProduct />} />
+
+      </Route>
+
     </Routes>
   );
 };
