@@ -21,6 +21,7 @@ const port = process.env.PORT || 8080;
 // MIDDLEWARE TO PARSE JSON REQUESTS
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // ✅ ROUTES
 app.use('/api/users',userRouter)

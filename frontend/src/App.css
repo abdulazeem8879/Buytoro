@@ -1,2 +1,10 @@
 @import "tailwindcss";
 
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.product-card:hover img {
+  transform: scale(1.08);
+}

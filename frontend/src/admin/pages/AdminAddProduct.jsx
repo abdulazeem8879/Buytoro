@@ -10,6 +10,7 @@ const AdminAddProduct = () => {
   const [description, setDescription] = useState("");
   const [countInStock, setCountInStock] = useState(0);
   const [images, setImages] = useState([]);
+  const [brand, setBrand] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -31,6 +32,7 @@ const AdminAddProduct = () => {
       formData.append("price", price);
       formData.append("description", description);
       formData.append("countInStock", countInStock);
+      formData.append("brand", brand);
 
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
@@ -88,6 +90,20 @@ const AdminAddProduct = () => {
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+
+          <div>
+              <label className="block text-gray-700 font-medium mb-1">
+              Brand
+            </label>
+            <input
+  type="text"
+  value={brand}
+  onChange={(e) => setBrand(e.target.value)}
+  required
+   className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
           </div>
 
           <div>

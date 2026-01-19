@@ -5,7 +5,7 @@ export const CartContext = createContext();
 const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
-  // Page load par cart restore karo
+  // Load cart from localStorage
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
     if (storedCart) {
@@ -13,23 +13,19 @@ const CartProvider = ({ children }) => {
     }
   }, []);
 
-  // Har change par localStorage update
+  // Save cart to localStorage
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
   // Add to cart
-  const addToCart = (product, qty = 1) => {
-    const existItem = cartItems.find(
-      (item) => item._id === product._id
-    );
+  const addToCart = (product, qty) => {
+    const existItem = cartItems.find((x) => x._id === product._id);
 
     if (existItem) {
       setCartItems(
-        cartItems.map((item) =>
-          item._id === existItem._id
-            ? { ...item, qty: item.qty + qty }
-            : item
+        cartItems.map((x) =>
+          x._id === existItem._id ? { ...x, qty: x.qty + qty } : x
         )
       );
     } else {
@@ -37,12 +33,7 @@ const CartProvider = ({ children }) => {
     }
   };
 
-  // Remove item
-  const removeFromCart = (id) => {
-    setCartItems(cartItems.filter((item) => item._id !== id));
-  };
-
-  // Update quantity
+  // Update qty
   const updateQty = (id, qty) => {
     setCartItems(
       cartItems.map((item) =>
@@ -51,9 +42,14 @@ const CartProvider = ({ children }) => {
     );
   };
 
+  // Remove item
+  const removeFromCart = (id) => {
+    setCartItems(cartItems.filter((item) => item._id !== id));
+  };
+
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, updateQty }}
+      value={{ cartItems, addToCart, updateQty, removeFromCart }}
     >
       {children}
     </CartContext.Provider>

@@ -23,21 +23,15 @@ const productSchema = new mongoose.Schema(
     },
 
   images: [
-  {
-    type: String,
-    required: true,
-  },
-],
-
-    inStock: {
-      type: Boolean,
-      default: true,
+    {
+      url: { type: String, required: true },
+      public_id: { type: String, required: true },
     },
+  ],
 
-    countInStock: {
-      type: Number,
-      default: 0,
-    },
+ inStock: { type: Boolean, default: true },
+
+  countInStock: { type: Number, default: 0 },
   },
   {
     timestamps: true, // createdAt, updatedAt

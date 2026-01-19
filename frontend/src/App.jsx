@@ -16,30 +16,64 @@ import AdminDashboard from "./admin/pages/AdminDashboard";
 import AdminProductList from "./admin/pages/AdminProductList";
 import AdminAddProduct from "./admin/pages/AdminAddProduct";
 import AdminEditProduct from "./admin/pages/AdminEditProduct";
+import ProductDetail from "./pages/ProductDetail";
+import MainLayout from "./layout/MainLayout";
 
 const App = () => {
   return (
     <Routes>
       {/* public routes */}
+
+<Route element={<MainLayout />}>
+
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/cart" element={<Cart />} />
+      <Route path="/product/:id" element={<ProductDetail />} />
 
       {/* protected routes */}
-      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-      <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-      <Route path="/order/:id" element={<ProtectedRoute><Order /></ProtectedRoute>} />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/checkout"
+        element={
+          <ProtectedRoute>
+            <Checkout />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/order/:id"
+        element={
+          <ProtectedRoute>
+            <Order />
+          </ProtectedRoute>
+        }
+      />
+</Route>
 
       {/* admin routes */}
-          <Route path="/admin" element={<AdminRoute> <AdminLayout /> </AdminRoute>}>
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            {" "}
+            <AdminLayout />{" "}
+          </AdminRoute>
+        }
+      >
         <Route index element={<AdminDashboard />} />
         <Route path="products" element={<AdminProductList />} />
         <Route path="products/add" element={<AdminAddProduct />} />
         <Route path="products/:id/edit" element={<AdminEditProduct />} />
-
       </Route>
-
     </Routes>
   );
 };

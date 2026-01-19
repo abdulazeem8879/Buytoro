@@ -1,4 +1,5 @@
 import Product from "../models/product.js"; // 👈 CAPITAL P
+import { getPublicId } from "../utils/cloudinaryHelpers.js";
 
 // @desc   Get all watches
 // @route  GET /api/watches
@@ -32,19 +33,28 @@ export const getProductById = async (req, res, next) => {
 
 export const createProduct = async (req, res, next) => {
   try {
-    const { name, price, description, countInStock } = req.body;
+    const { name, brand, price, description, countInStock } = req.body;
 
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "No images uploaded" });
     }
 
-    const images = req.files.map((file) => file.path);
+    if (!brand) {
+      return res.status(400).json({ message: "Brand is required" });
+    }
+
+    // ✅ FIX: images as objects
+    const images = req.files.map((file) => ({
+      url: file.path,
+      public_id: file.filename, // cloudinary public_id
+    }));
 
     const newProduct = await Product.create({
       name,
-      price,
+      brand,
+      price: Number(price),
       description,
-      countInStock,
+      countInStock: Number(countInStock),
       images,
     });
 
@@ -53,6 +63,7 @@ export const createProduct = async (req, res, next) => {
     next(error);
   }
 };
+
 
 
 //    Update watch
@@ -65,14 +76,25 @@ export const updateProduct = async (req, res, next) => {
     }
 
     product.name = req.body.name || product.name;
+    product.brand = req.body.brand || product.brand; // ✅ ADD THIS
     product.price = req.body.price || product.price;
     product.description = req.body.description || product.description;
     product.countInStock =
       req.body.countInStock ?? product.countInStock;
 
-    if (req.files && req.files.length > 0) {
-      product.images = req.files.map((file) => file.path);
-    }
+  // 🔥 IF new images uploaded
+if (req.files && req.files.length > 0) {
+
+  // 1️⃣ delete old images from cloudinary
+  for (const img of product.images) {
+    const publicId = getPublicId(img);
+    await cloudinary.uploader.destroy(publicId);
+  }
+
+  // 2️⃣ save new images
+  product.images = req.files.map((file) => file.path);
+}
+
 
     const updatedProduct = await product.save();
     res.json(updatedProduct);
@@ -80,6 +102,7 @@ export const updateProduct = async (req, res, next) => {
     next(error);
   }
 };
+
 
 // @desc   Delete watch
 
