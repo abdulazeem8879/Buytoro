@@ -23,7 +23,7 @@ const [qty, setQty] = useState(1);
       try {
         const { data } = await api.get(`/products/${id}`);
         setProduct(data);
-        setSelectedImage(data.images?.[0]); // default main image
+        setSelectedImage(data.images?.[0]?.url); // default main image
       } catch (err) {
         setError("Failed to load product");
       } finally {
@@ -52,16 +52,16 @@ const [qty, setQty] = useState(1);
           {product.images.map((img, index) => (
             <img
               key={index}
-              src={img}
+              src={img.url}
               alt="thumb"
               style={{
                 ...thumbStyle,
                 border:
-                  selectedImage === img
+                  selectedImage === img.url
                     ? "2px solid black"
                     : "1px solid #ccc",
               }}
-              onClick={() => setSelectedImage(img)}
+              onClick={() => setSelectedImage(img.url)}
             />
           ))}
         </div>

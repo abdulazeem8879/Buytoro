@@ -25,7 +25,7 @@ const Home = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [keyword]);
 
   // 🔎 Filter products
   const filteredProducts = products.filter(
@@ -62,12 +62,13 @@ const Home = () => {
               style={cardStyle}
             >
               <Link to={`/product/${product._id}`}>
-                <div className="image-wrapper">
-                  <img
-                    src={product.images?.[0]}
-                    alt={product.name}
-                  />
-                </div>
+              <div className="image-wrapper">
+  <img
+    src={product.images?.[0]?.url}
+    alt={product.name}
+  />
+</div>
+
               </Link>
 
               <h3>{product.name}</h3>

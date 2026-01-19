@@ -1,5 +1,6 @@
 import Product from "../models/product.js"; // 👈 CAPITAL P
 import { getPublicId } from "../utils/cloudinaryHelpers.js";
+import cloudinary from "../config/cloudinary.js";
 
 // @desc   Get all watches
 // @route  GET /api/watches

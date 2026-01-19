@@ -6,7 +6,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "watches",
-    allowed_formats: ["jpg", "jpeg", "png"], // 👈 spelling fixed
+    allowed_formats: ["jpg", "jpeg", "png","webp"], // 👈 spelling fixed
   },
 });
 

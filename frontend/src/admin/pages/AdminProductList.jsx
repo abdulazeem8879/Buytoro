@@ -93,7 +93,7 @@ const AdminProductList = () => {
               >
                 <td className="border px-4 py-3">
                   <img
-                    src={product.images[0]}
+                    src={product.images?.[0]?.url}
                     alt={product.name}
                     className="w-14 h-14 object-cover rounded-md"
                   />

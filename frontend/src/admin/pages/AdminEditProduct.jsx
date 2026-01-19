@@ -178,7 +178,7 @@ const AdminEditProduct = () => {
             {existingImages.map((img, i) => (
               <img
                 key={i}
-                src={img}
+                src={img.url}
                 alt="product"
                 className="w-20 h-20 object-cover border rounded"
               />
