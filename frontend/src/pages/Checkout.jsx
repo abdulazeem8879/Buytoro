@@ -1,10 +1,12 @@
+
+
 import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import { createOrder } from "../services/orderService";
 import { useNavigate } from "react-router-dom";
 
-const Checkout = () => {
+const CheckOut = () => {
   const { cartItems } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -83,4 +85,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default CheckOut;
