@@ -1,12 +1,10 @@
-
-
 import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import { createOrder } from "../services/orderService";
 import { useNavigate } from "react-router-dom";
 
-const CheckOut = () => {
+const PlaceOrder = () => {
   const { cartItems } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -20,7 +18,7 @@ const CheckOut = () => {
   // prices
   const itemsPrice = cartItems.reduce(
     (acc, item) => acc + item.price * item.qty,
-    0
+    0,
   );
   const shippingPrice = itemsPrice > 5000 ? 0 : 100;
   const taxPrice = Math.round(itemsPrice * 0.02);
@@ -57,7 +55,10 @@ const CheckOut = () => {
       <h1>Checkout</h1>
 
       <h2>Shipping</h2>
-      <input placeholder="Address" onChange={(e) => setAddress(e.target.value)} />
+      <input
+        placeholder="Address"
+        onChange={(e) => setAddress(e.target.value)}
+      />
       <input placeholder="City" onChange={(e) => setCity(e.target.value)} />
       <input
         placeholder="Postal Code"
@@ -85,4 +86,4 @@ const CheckOut = () => {
   );
 };
 
-export default CheckOut;
+export default PlaceOrder;

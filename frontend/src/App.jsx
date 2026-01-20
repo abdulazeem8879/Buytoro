@@ -17,47 +17,46 @@ import AdminAddProduct from "./admin/pages/AdminAddProduct";
 import AdminEditProduct from "./admin/pages/AdminEditProduct";
 import ProductDetail from "./pages/ProductDetail";
 import MainLayout from "./layout/MainLayout";
-import CheckOut from "./pages/CheckOut";
+import PlaceOrder from "./pages/PlaceOrder";
 
 const App = () => {
   return (
     <Routes>
       {/* public routes */}
 
-<Route element={<MainLayout />}>
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
 
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/product/:id" element={<ProductDetail />} />
-
-      {/* protected routes */}
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/checkout"
-        element={
-          <ProtectedRoute>
-<CheckOut />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/order/:id"
-        element={
-          <ProtectedRoute>
-            <Order />
-          </ProtectedRoute>
-        }
-      />
-</Route>
+        {/* protected routes */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <PlaceOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/order/:id"
+          element={
+            <ProtectedRoute>
+              <Order />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
 
       {/* admin routes */}
       <Route
