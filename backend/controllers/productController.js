@@ -1,36 +1,32 @@
 import Product from "../models/product.js"; // 👈 CAPITAL P
-import { getPublicId } from "../utils/cloudinaryHelpers.js";
 import cloudinary from "../config/cloudinary.js";
 
-// @desc   Get all watches
-// @route  GET /api/watches
+// @desc   Get all products
+// @route  GET /api/products
 export const getAllProducts = async (req, res, next) => {
   try {
-    const watches = await Product.find();
-    res.json(watches);
+    const products = await Product.find();
+    res.json(products);
   } catch (error) {
     next(error);
   }
 };
 
-// @desc   Get single watch
-// @route  GET /api/watches/:id
+// @desc   Get single product
+// @route  GET /api/products/:id
 export const getProductById = async (req, res, next) => {
   try {
-    const singleWatch = await Product.findById(req.params.id);
+    const singleproduct = await Product.findById(req.params.id);
 
-    if (!singleWatch) {
-      return res.status(404).json({ message: "Watch not found" });
+    if (!singleproduct) {
+      return res.status(404).json({ message: "product not found" });
     }
 
-    res.json(singleWatch);
+    res.json(singleproduct);
   } catch (error) {
     next(error);
   }
 };
-
-
-
 
 export const createProduct = async (req, res, next) => {
   try {
@@ -65,8 +61,6 @@ export const createProduct = async (req, res, next) => {
   }
 };
 
-
-
 //    Update watch
 export const updateProduct = async (req, res, next) => {
   try {
@@ -77,25 +71,24 @@ export const updateProduct = async (req, res, next) => {
     }
 
     product.name = req.body.name || product.name;
-    product.brand = req.body.brand || product.brand; // ✅ ADD THIS
+    product.brand = req.body.brand || product.brand;
     product.price = req.body.price || product.price;
     product.description = req.body.description || product.description;
-    product.countInStock =
-      req.body.countInStock ?? product.countInStock;
+    product.countInStock = req.body.countInStock ?? product.countInStock;
 
-  // 🔥 IF new images uploaded
-if (req.files && req.files.length > 0) {
+    // 🔥 IF new images uploaded
+    if (req.files && req.files.length > 0) {
+      // 1️⃣ delete old images
+      for (const img of product.images) {
+        await cloudinary.uploader.destroy(img.public_id);
+      }
 
-  // 1️⃣ delete old images from cloudinary
-  for (const img of product.images) {
-    const publicId = getPublicId(img);
-    await cloudinary.uploader.destroy(publicId);
-  }
-
-  // 2️⃣ save new images
-  product.images = req.files.map((file) => file.path);
-}
-
+      // 2️⃣ save new images (OBJECTS, not strings)
+      product.images = req.files.map((file) => ({
+        url: file.path,
+        public_id: file.filename,
+      }));
+    }
 
     const updatedProduct = await product.save();
     res.json(updatedProduct);
@@ -103,7 +96,6 @@ if (req.files && req.files.length > 0) {
     next(error);
   }
 };
-
 
 // @desc   Delete watch
 
