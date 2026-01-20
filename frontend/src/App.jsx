@@ -9,7 +9,6 @@ import Order from "./pages/Order";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Checkout from "./pages/CheckOut";
 import AdminRoute from "./admin/AdminRoute";
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboard from "./admin/pages/AdminDashboard";
@@ -18,6 +17,7 @@ import AdminAddProduct from "./admin/pages/AdminAddProduct";
 import AdminEditProduct from "./admin/pages/AdminEditProduct";
 import ProductDetail from "./pages/ProductDetail";
 import MainLayout from "./layout/MainLayout";
+import CheckOut from "./pages/CheckOut";
 
 const App = () => {
   return (
@@ -45,7 +45,7 @@ const App = () => {
         path="/checkout"
         element={
           <ProtectedRoute>
-            <Checkout />
+<CheckOut />
           </ProtectedRoute>
         }
       />
