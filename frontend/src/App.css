@@ -8,3 +8,8 @@
 .product-card:hover img {
   transform: scale(1.08);
 }
+
+
+.input {
+  @apply w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+}

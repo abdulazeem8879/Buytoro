@@ -6,7 +6,6 @@ import "./App.css";
 import Register from "./pages/Register";
 import Cart from "./pages/Cart";
 import Order from "./pages/Order";
-import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./admin/AdminRoute";
@@ -19,11 +18,17 @@ import ProductDetail from "./pages/ProductDetail";
 import MainLayout from "./layout/MainLayout";
 import PlaceOrder from "./pages/PlaceOrder";
 
+// 🔥 PROFILE PAGES
+import Profile from "./pages/profile/Profile";
+import EditProfile from "./pages/profile/EditProfile";
+import ChangePassword from "./pages/profile/ChangePassword";
+import Security from "./pages/profile/Security";
+import AdminOrderList from "./admin/pages/AdminOrderList";
+
 const App = () => {
   return (
     <Routes>
-      {/* public routes */}
-
+      {/* public + protected user routes */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -40,6 +45,34 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/profile/edit"
+          element={
+            <ProtectedRoute>
+              <EditProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile/change-password"
+          element={
+            <ProtectedRoute>
+              <ChangePassword />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile/security"
+          element={
+            <ProtectedRoute>
+              <Security />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/checkout"
           element={
@@ -48,6 +81,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/order/:id"
           element={
@@ -63,8 +97,7 @@ const App = () => {
         path="/admin"
         element={
           <AdminRoute>
-            {" "}
-            <AdminLayout />{" "}
+            <AdminLayout />
           </AdminRoute>
         }
       >
@@ -72,6 +105,7 @@ const App = () => {
         <Route path="products" element={<AdminProductList />} />
         <Route path="products/add" element={<AdminAddProduct />} />
         <Route path="products/:id/edit" element={<AdminEditProduct />} />
+        <Route path="orders" element={<AdminOrderList />} />
       </Route>
     </Routes>
   );

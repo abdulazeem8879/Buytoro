@@ -14,11 +14,14 @@ const AdminEditProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
-  const [brand, setBrand] = useState("");
+  // 🔑 Schema-based states
+  const [productName, setProductName] = useState("");
+  const [brandName, setBrandName] = useState("");
+  const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [countInStock, setCountInStock] = useState(0);
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [stockQuantity, setStockQuantity] = useState(0);
+  const [shortDescription, setShortDescription] = useState("");
 
   const [existingImages, setExistingImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
@@ -27,16 +30,19 @@ const AdminEditProduct = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  // Fetch product
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const { data } = await api.get(`/products/${id}`);
 
-        setName(data.name);
-        setBrand(data.brand);
+        setProductName(data.productName);
+        setBrandName(data.brandName);
+        setCategory(data.category);
         setPrice(data.price);
-        setDescription(data.description || "");
-        setCountInStock(data.countInStock || 0);
+        setDiscountPrice(data.discountPrice || "");
+        setStockQuantity(data.stockQuantity || 0);
+        setShortDescription(data.shortDescription || "");
         setExistingImages(data.images || []);
       } catch (err) {
         setError("Failed to load product");
@@ -59,11 +65,15 @@ const AdminEditProduct = () => {
 
     try {
       const formData = new FormData();
-      formData.append("name", name);
-      formData.append("brand", brand);
+
+      // 🔑 Schema-aligned fields
+      formData.append("productName", productName);
+      formData.append("brandName", brandName);
+      formData.append("category", category);
       formData.append("price", price);
-      formData.append("description", description);
-      formData.append("countInStock", countInStock);
+      formData.append("discountPrice", discountPrice);
+      formData.append("stockQuantity", stockQuantity);
+      formData.append("shortDescription", shortDescription);
 
       if (newImages.length > 0) {
         for (let i = 0; i < newImages.length; i++) {
@@ -83,12 +93,13 @@ const AdminEditProduct = () => {
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-64 text-lg font-semibold">
         Loading product...
       </div>
     );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -107,14 +118,14 @@ const AdminEditProduct = () => {
         onSubmit={submitHandler}
         className="bg-white shadow rounded-lg p-6 space-y-5"
       >
-        {/* Name */}
+        {/* Product Name */}
         <div>
           <label className="flex items-center gap-2 font-medium mb-1">
-            <Package size={18} /> Name
+            <Package size={18} /> Product Name
           </label>
           <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
             required
             className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
           />
@@ -126,8 +137,19 @@ const AdminEditProduct = () => {
             <Tag size={18} /> Brand
           </label>
           <input
-            value={brand}
-            onChange={(e) => setBrand(e.target.value)}
+            value={brandName}
+            onChange={(e) => setBrandName(e.target.value)}
+            required
+            className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
+          />
+        </div>
+
+        {/* Category */}
+        <div>
+          <label className="font-medium mb-1 block">Category</label>
+          <input
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
             required
             className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
           />
@@ -147,14 +169,25 @@ const AdminEditProduct = () => {
           />
         </div>
 
-        {/* Description */}
+        {/* Discount Price */}
+        <div>
+          <label className="font-medium mb-1 block">Discount Price</label>
+          <input
+            type="number"
+            value={discountPrice}
+            onChange={(e) => setDiscountPrice(e.target.value)}
+            className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
+          />
+        </div>
+
+        {/* Short Description */}
         <div>
           <label className="flex items-center gap-2 font-medium mb-1">
-            <FileText size={18} /> Description
+            <FileText size={18} /> Short Description
           </label>
           <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            value={shortDescription}
+            onChange={(e) => setShortDescription(e.target.value)}
             rows="4"
             className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
           />
@@ -162,11 +195,11 @@ const AdminEditProduct = () => {
 
         {/* Stock */}
         <div>
-          <label className="font-medium mb-1 block">Count In Stock</label>
+          <label className="font-medium mb-1 block">Stock Quantity</label>
           <input
             type="number"
-            value={countInStock}
-            onChange={(e) => setCountInStock(e.target.value)}
+            value={stockQuantity}
+            onChange={(e) => setStockQuantity(e.target.value)}
             className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
           />
         </div>

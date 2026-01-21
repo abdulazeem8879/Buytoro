@@ -5,18 +5,40 @@ import api from "../../services/api";
 const AdminAddProduct = () => {
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
+  const [productName, setProductName] = useState("");
+  const [brandName, setBrandName] = useState("");
+  const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [countInStock, setCountInStock] = useState(0);
-  const [images, setImages] = useState([]);
-  const [brand, setBrand] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [stockQuantity, setStockQuantity] = useState(0);
+  const [shortDescription, setShortDescription] = useState("");
+
+  // 🔥 image states
+  const [images, setImages] = useState([]); // File[]
+  const [imagePreviews, setImagePreviews] = useState([]); // string[]
+
+  const [video, setVideo] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // ✅ add images one by one (append)
   const handleImageChange = (e) => {
-    setImages(e.target.files);
+    const files = Array.from(e.target.files);
+
+    setImages((prev) => [...prev, ...files]);
+
+    const previews = files.map((file) =>
+      URL.createObjectURL(file)
+    );
+
+    setImagePreviews((prev) => [...prev, ...previews]);
+
+    e.target.value = null; // reset input
+  };
+
+  const handleVideoChange = (e) => {
+    setVideo(e.target.files[0]);
   };
 
   const submitHandler = async (e) => {
@@ -28,20 +50,24 @@ const AdminAddProduct = () => {
     try {
       const formData = new FormData();
 
-      formData.append("name", name);
+      formData.append("productName", productName);
+      formData.append("brandName", brandName);
+      formData.append("category", category);
       formData.append("price", price);
-      formData.append("description", description);
-      formData.append("countInStock", countInStock);
-      formData.append("brand", brand);
+      formData.append("discountPrice", discountPrice);
+      formData.append("stockQuantity", stockQuantity);
+      formData.append("shortDescription", shortDescription);
 
-      for (let i = 0; i < images.length; i++) {
-        formData.append("images", images[i]);
+      images.forEach((img) => {
+        formData.append("images", img);
+      });
+
+      if (video) {
+        formData.append("productVideo", video);
       }
 
       await api.post("/products", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       navigate("/admin/products");
@@ -60,102 +86,116 @@ const AdminAddProduct = () => {
         </h1>
 
         {error && (
-          <p className="mb-4 text-red-600 bg-red-100 border border-red-200 p-2 rounded">
+          <p className="mb-4 text-red-600 bg-red-100 border p-2 rounded">
             {error}
           </p>
         )}
 
         <form onSubmit={submitHandler} className="space-y-4">
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">
-              Name
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <input
+            placeholder="Product Name"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+            required
+            className="w-full border p-2 rounded"
+          />
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">
-              Price
-            </label>
-            <input
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              required
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <input
+            placeholder="Brand Name"
+            value={brandName}
+            onChange={(e) => setBrandName(e.target.value)}
+            required
+            className="w-full border p-2 rounded"
+          />
 
-          <div>
-              <label className="block text-gray-700 font-medium mb-1">
-              Brand
-            </label>
-            <input
-  type="text"
-  value={brand}
-  onChange={(e) => setBrand(e.target.value)}
-  required
-   className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <input
+            placeholder="Category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+            className="w-full border p-2 rounded"
+          />
 
-          </div>
+          <input
+            type="number"
+            placeholder="Price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            required
+            className="w-full border p-2 rounded"
+          />
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">
-              Description
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows="4"
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <input
+            type="number"
+            placeholder="Discount Price"
+            value={discountPrice}
+            onChange={(e) => setDiscountPrice(e.target.value)}
+            className="w-full border p-2 rounded"
+          />
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">
-              Count In Stock
-            </label>
-            <input
-              type="number"
-              value={countInStock}
-              onChange={(e) => setCountInStock(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <input
+            type="number"
+            placeholder="Stock Quantity"
+            value={stockQuantity}
+            onChange={(e) => setStockQuantity(e.target.value)}
+            className="w-full border p-2 rounded"
+          />
 
+          <textarea
+            placeholder="Short Description"
+            value={shortDescription}
+            onChange={(e) => setShortDescription(e.target.value)}
+            className="w-full border p-2 rounded"
+          />
+
+          {/* 🔥 IMAGE UPLOAD */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">
-              Images
+            <label className="font-medium block mb-2">
+              Product Images
             </label>
+
             <input
               type="file"
-              multiple
+              accept="image/*"
               onChange={handleImageChange}
-              className="w-full border border-gray-300 rounded px-3 py-2 bg-white focus:outline-none"
             />
+
+            {/* PREVIEW SLOTS */}
+            {imagePreviews.length > 0 && (
+              <div className="grid grid-cols-4 gap-3 mt-3">
+                {imagePreviews.map((src, index) => (
+                  <div
+                    key={index}
+                    className="border rounded overflow-hidden"
+                  >
+                    <img
+                      src={src}
+                      alt="preview"
+                      className="w-full h-24 object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div className="pt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full py-2 px-4 rounded text-white font-medium transition
-                ${
-                  loading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700"
-                }`}
-            >
-              {loading ? "Saving..." : "Add Product"}
-            </button>
-          </div>
+          {/* VIDEO */}
+          <input
+            type="file"
+            accept="video/*"
+            onChange={handleVideoChange}
+          />
+
+          <button
+            disabled={loading}
+            className={`w-full py-2 text-white rounded ${
+              loading
+                ? "bg-gray-400"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
+          >
+            {loading ? "Saving..." : "Add Product"}
+          </button>
         </form>
       </div>
     </div>

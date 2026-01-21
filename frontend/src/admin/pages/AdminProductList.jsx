@@ -8,7 +8,7 @@ const AdminProductList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // products load
+  // Load products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -24,31 +24,34 @@ const AdminProductList = () => {
     fetchProducts();
   }, []);
 
-  // delete product
+  // Delete product
   const deleteHandler = async (id) => {
-    if (!window.confirm("Are you sure?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
 
     try {
       await api.delete(`/products/${id}`);
-      setProducts(products.filter((p) => p._id !== id));
+      setProducts((prev) => prev.filter((p) => p._id !== id));
     } catch (err) {
       alert("Delete failed");
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <h3 className="text-center text-lg font-semibold text-gray-600 mt-10">
         Loading products...
       </h3>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
       <h3 className="text-center text-lg font-semibold text-red-500 mt-10">
         {error}
       </h3>
     );
+  }
 
   return (
     <div className="p-6">
@@ -74,7 +77,7 @@ const AdminProductList = () => {
                 IMAGE
               </th>
               <th className="border px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                NAME
+                PRODUCT NAME
               </th>
               <th className="border px-4 py-3 text-left text-sm font-semibold text-gray-600">
                 PRICE
@@ -94,16 +97,19 @@ const AdminProductList = () => {
                 <td className="border px-4 py-3">
                   <img
                     src={product.images?.[0]?.url}
-                    alt={product.name}
+                    alt={product.productName}
                     className="w-14 h-14 object-cover rounded-md"
                   />
                 </td>
+
                 <td className="border px-4 py-3 font-medium text-gray-700">
-                  {product.name}
+                  {product.productName}
                 </td>
+
                 <td className="border px-4 py-3 text-gray-700">
                   ₹{product.price}
                 </td>
+
                 <td className="border px-4 py-3">
                   <div className="flex items-center justify-center gap-4">
                     <Link

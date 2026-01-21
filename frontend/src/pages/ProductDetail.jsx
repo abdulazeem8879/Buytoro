@@ -1,14 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
 import { CartContext } from "../context/CartContext";
-import { useContext } from "react";
 
 const ProductDetail = () => {
-
-// Context
-const { addToCart } = useContext(CartContext);
-const [qty, setQty] = useState(1);
+  // Context
+  const { addToCart } = useContext(CartContext);
+  const [qty, setQty] = useState(1);
 
   const { id } = useParams(); // product id from URL
 
@@ -23,7 +21,7 @@ const [qty, setQty] = useState(1);
       try {
         const { data } = await api.get(`/products/${id}`);
         setProduct(data);
-        setSelectedImage(data.images?.[0]?.url); // default main image
+        setSelectedImage(data.images?.[0]?.url || "");
       } catch (err) {
         setError("Failed to load product");
       } finally {
@@ -44,12 +42,12 @@ const [qty, setQty] = useState(1);
       <div style={leftStyle}>
         <img
           src={selectedImage}
-          alt={product.name}
+          alt={product.productName}
           style={mainImageStyle}
         />
 
         <div style={thumbsStyle}>
-          {product.images.map((img, index) => (
+          {product.images?.map((img, index) => (
             <img
               key={index}
               src={img.url}
@@ -69,36 +67,63 @@ const [qty, setQty] = useState(1);
 
       {/* RIGHT: Product Info */}
       <div style={rightStyle}>
-        <h1>{product.name}</h1>
-        <p><strong>Brand:</strong> {product.brand}</p>
-        <p><strong>Price:</strong> ₹ {product.price}</p>
-        <p>{product.description}</p>
+        <h1>{product.productName}</h1>
+
+        <p>
+          <strong>Brand:</strong> {product.brandName}
+        </p>
+
+        <p>
+          <strong>Price:</strong>{" "}
+          {product.discountPrice > 0 ? (
+            <>
+              <span style={{ textDecoration: "line-through", marginRight: 8 }}>
+                ₹{product.price}
+              </span>
+              <span style={{ fontWeight: "bold" }}>
+                ₹{product.discountPrice}
+              </span>
+            </>
+          ) : (
+            <>₹{product.price}</>
+          )}
+        </p>
+
+        <p>{product.shortDescription}</p>
 
         <p>
           <strong>Status:</strong>{" "}
-          {product.countInStock > 0 ? "In Stock" : "Out of Stock"}
+          {product.stockStatus === "in_stock" ? "In Stock" : "Out of Stock"}
         </p>
 
-        {product.countInStock > 0 && (
-  <div>
-    <label>Qty</label>
-    <select value={qty} onChange={(e) => setQty(Number(e.target.value))}>
-      {[...Array(product.countInStock).keys()].map((x) => (
-        <option key={x + 1} value={x + 1}>
-          {x + 1}
-        </option>
-      ))}
-    </select>
-  </div>
-)}
+        {product.stockStatus === "in_stock" && (
+          <div>
+            <label>Qty</label>
+            <select
+              value={qty}
+              onChange={(e) => setQty(Number(e.target.value))}
+            >
+              {[
+                ...Array(
+                  Math.min(product.stockQuantity, 10)
+                ).keys(),
+              ].map((x) => (
+                <option key={x + 1} value={x + 1}>
+                  {x + 1}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
-
-       <button
-  disabled={product.countInStock === 0}
-  onClick={() => addToCart(product, qty)}
->
-  Add To Cart
-</button>
+        <button
+          className="px-5 py-2 bg-blue-500 text-white rounded-md 
+          hover:bg-blue-600 transition-colors duration-200"
+          disabled={product.stockStatus !== "in_stock"}
+          onClick={() => addToCart(product, qty)}
+        >
+          Add To Cart
+        </button>
       </div>
     </div>
   );
@@ -106,6 +131,7 @@ const [qty, setQty] = useState(1);
 
 export default ProductDetail;
 
+// ---------------- STYLES ----------------
 
 const pageStyle = {
   display: "flex",
@@ -126,9 +152,8 @@ const mainImageStyle = {
   aspectRatio: "1 / 1.1",
   objectFit: "contain",
   borderRadius: "8px",
-  maxHeight: "70vh"
+  maxHeight: "70vh",
 };
-
 
 const thumbsStyle = {
   display: "flex",

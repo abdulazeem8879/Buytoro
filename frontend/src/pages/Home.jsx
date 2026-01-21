@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import api from "../services/api";
+import { CartContext } from "../context/CartContext";
 import "./Home.css";
 
 const Home = () => {
@@ -8,7 +9,10 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🔍 URL se search keyword
+  // 🛒 Cart
+  const { addToCart } = useContext(CartContext);
+
+  // 🔍 URL search
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get("q") || "";
 
@@ -27,11 +31,15 @@ const Home = () => {
     fetchProducts();
   }, [keyword]);
 
-  // 🔎 Filter products
+  // 🔎 Filter products (NEW schema)
   const filteredProducts = products.filter(
     (product) =>
-      product.name.toLowerCase().includes(keyword.toLowerCase()) ||
-      product.brand?.toLowerCase().includes(keyword.toLowerCase())
+      product.productName
+        ?.toLowerCase()
+        .includes(keyword.toLowerCase()) ||
+      product.brandName
+        ?.toLowerCase()
+        .includes(keyword.toLowerCase())
   );
 
   return (
@@ -62,19 +70,65 @@ const Home = () => {
               style={cardStyle}
             >
               <Link to={`/product/${product._id}`}>
-              <div className="image-wrapper">
-  <img
-    src={product.images?.[0]?.url}
-    alt={product.name}
-  />
-</div>
-
+                <div className="image-wrapper">
+                  <img
+                    src={product.images?.[0]?.url}
+                    alt={product.productName}
+                  />
+                </div>
               </Link>
 
-              <h3>{product.name}</h3>
-              <p>₹ {product.price}</p>
+              <h3>{product.productName}</h3>
 
-              <Link to={`/product/${product._id}`} className="details-link">
+              <p>
+                {product.discountPrice > 0 ? (
+                  <>
+                    <span
+                      style={{
+                        textDecoration: "line-through",
+                        marginRight: 6,
+                        color: "#777",
+                      }}
+                    >
+                      ₹{product.price}
+                    </span>
+                    <strong>₹{product.discountPrice}</strong>
+                  </>
+                ) : (
+                  <>₹ {product.price}</>
+                )}
+              </p>
+
+              {/* 🛒 ADD TO CART */}
+              <button
+                disabled={product.stockStatus !== "in_stock"}
+                onClick={() => addToCart(product, 1)}
+                style={{
+                  marginTop: "10px",
+                  width: "100%",
+                  padding: "8px",
+                  background:
+                    product.stockStatus === "in_stock"
+                      ? "#000"
+                      : "#999",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor:
+                    product.stockStatus === "in_stock"
+                      ? "pointer"
+                      : "not-allowed",
+                }}
+              >
+                {product.stockStatus === "in_stock"
+                  ? "Add To Cart"
+                  : "Out of Stock"}
+              </button>
+
+              <Link
+                to={`/product/${product._id}`}
+                className="details-link"
+              >
                 View Details →
               </Link>
             </div>
