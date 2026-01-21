@@ -1,28 +1,58 @@
-  import mongoose from "mongoose";
+import mongoose from "mongoose";
 
-  const userSchema = new mongoose.Schema(
-    {
-      name: {
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+
+    password: {
+      type: String,
+      required: true,
+    },
+
+    // 🔐 Role
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+
+    // 🖼 Profile Image (Cloudinary)
+    profileImage: {
+      url: {
         type: String,
-        required: true,
+        default: "",
       },
-      password: {
+      public_id: {
         type: String,
-        required: true,
-      },
-      email: {
-        type: String,
-        required: true,
-      },
-      isAdmin: {
-        type: Boolean,
-        default: false,
+        default: "",
       },
     },
-    {
-      timestamps: true,
-    }
-  );
 
+    // 🟢 Account status
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
 
-  export default mongoose.model("User", userSchema);
+    // ⏱ Last login time
+    lastLogin: {
+      type: Date,
+    },
+  },
+  {
+    timestamps: true, // createdAt & updatedAt
+  }
+);
+
+const User = mongoose.model("User", userSchema);
+export default User;

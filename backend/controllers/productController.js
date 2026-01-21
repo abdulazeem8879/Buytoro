@@ -1,11 +1,11 @@
-import Product from "../models/product.js"; // 👈 CAPITAL P
+import Product from "../models/product.js";
 import cloudinary from "../config/cloudinary.js";
 
 // @desc   Get all products
 // @route  GET /api/products
 export const getAllProducts = async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().sort({ createdAt: -1 });
     res.json(products);
   } catch (error) {
     next(error);
@@ -16,52 +16,114 @@ export const getAllProducts = async (req, res, next) => {
 // @route  GET /api/products/:id
 export const getProductById = async (req, res, next) => {
   try {
-    const singleproduct = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id);
 
-    if (!singleproduct) {
-      return res.status(404).json({ message: "product not found" });
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
     }
 
-    res.json(singleproduct);
+    res.json(product);
   } catch (error) {
     next(error);
   }
 };
 
+// @desc   Create product
+// @route  POST /api/products
 export const createProduct = async (req, res, next) => {
   try {
-    const { name, brand, price, description, countInStock } = req.body;
+    const {
+      productName,
+      brandName,
+      category,
+      shortDescription,
+      fullDescription,
+      price,
+      discountPrice,
+      stockQuantity,
+      minOrderQuantity,
 
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ message: "No images uploaded" });
+      watchType,
+      strapMaterial,
+      strapColor,
+      dialColor,
+      displayType,
+      waterResistance,
+      movementType,
+      glassType,
+      warrantyPeriod,
+
+      shippingCharges,
+      deliveryTime,
+      returnPolicy,
+    } = req.body;
+
+    if (!req.files?.images || req.files.images.length === 0) {
+      return res.status(400).json({ message: "Product images are required" });
     }
 
-    if (!brand) {
-      return res.status(400).json({ message: "Brand is required" });
+    if (discountPrice && Number(discountPrice) > Number(price)) {
+      return res
+        .status(400)
+        .json({ message: "Discount price cannot be greater than price" });
     }
 
-    // ✅ FIX: images as objects
-    const images = req.files.map((file) => ({
+    const stockStatus =
+      Number(stockQuantity) > 0 ? "in_stock" : "out_of_stock";
+
+    // Images
+    const images = req.files.images.map((file) => ({
       url: file.path,
-      public_id: file.filename, // cloudinary public_id
+      public_id: file.filename,
     }));
 
-    const newProduct = await Product.create({
-      name,
-      brand,
+    // Product Video (optional)
+    let productVideo = null;
+    if (req.files.productVideo?.length > 0) {
+      productVideo = {
+        url: req.files.productVideo[0].path,
+        public_id: req.files.productVideo[0].filename,
+      };
+    }
+
+    const product = await Product.create({
+      productName,
+      brandName,
+      category,
+      shortDescription,
+      fullDescription,
       price: Number(price),
-      description,
-      countInStock: Number(countInStock),
+      discountPrice: Number(discountPrice) || 0,
+      stockQuantity: Number(stockQuantity),
+      stockStatus,
+      minOrderQuantity,
+
+      watchType,
+      strapMaterial,
+      strapColor,
+      dialColor,
+      displayType,
+      waterResistance,
+      movementType,
+      glassType,
+      warrantyPeriod,
+
+      shippingCharges,
+      deliveryTime,
+      returnPolicy,
+
       images,
+      productVideo,
     });
 
-    res.status(201).json(newProduct);
+    res.status(201).json(product);
   } catch (error) {
     next(error);
   }
 };
 
-//    Update watch
+// @desc   Update product
+// @route  PUT /api/products/:id
 export const updateProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -70,24 +132,44 @@ export const updateProduct = async (req, res, next) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    product.name = req.body.name || product.name;
-    product.brand = req.body.brand || product.brand;
-    product.price = req.body.price || product.price;
-    product.description = req.body.description || product.description;
-    product.countInStock = req.body.countInStock ?? product.countInStock;
+    // Basic fields
+    Object.keys(req.body).forEach((key) => {
+      product[key] = req.body[key] ?? product[key];
+    });
 
-    // 🔥 IF new images uploaded
-    if (req.files && req.files.length > 0) {
-      // 1️⃣ delete old images
+    // Auto stock status
+    if (req.body.stockQuantity !== undefined) {
+      product.stockStatus =
+        Number(req.body.stockQuantity) > 0
+          ? "in_stock"
+          : "out_of_stock";
+    }
+
+    // 🔥 Update images
+    if (req.files?.images?.length > 0) {
       for (const img of product.images) {
         await cloudinary.uploader.destroy(img.public_id);
       }
 
-      // 2️⃣ save new images (OBJECTS, not strings)
-      product.images = req.files.map((file) => ({
+      product.images = req.files.images.map((file) => ({
         url: file.path,
         public_id: file.filename,
       }));
+    }
+
+    // 🔥 Update product video
+    if (req.files?.productVideo?.length > 0) {
+      if (product.productVideo?.public_id) {
+        await cloudinary.uploader.destroy(
+          product.productVideo.public_id,
+          { resource_type: "video" }
+        );
+      }
+
+      product.productVideo = {
+        url: req.files.productVideo[0].path,
+        public_id: req.files.productVideo[0].filename,
+      };
     }
 
     const updatedProduct = await product.save();
@@ -97,17 +179,29 @@ export const updateProduct = async (req, res, next) => {
   }
 };
 
-// @desc   Delete watch
-
+// @desc   Delete product
+// @route  DELETE /api/products/:id
 export const deleteProduct = async (req, res, next) => {
   try {
-    const existingProduct = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id);
 
-    if (!existingProduct) {
+    if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    await existingProduct.deleteOne();
+    // Delete images
+    for (const img of product.images) {
+      await cloudinary.uploader.destroy(img.public_id);
+    }
+
+    // Delete video
+    if (product.productVideo?.public_id) {
+      await cloudinary.uploader.destroy(product.productVideo.public_id, {
+        resource_type: "video",
+      });
+    }
+
+    await product.deleteOne();
     res.json({ message: "Product removed successfully" });
   } catch (error) {
     next(error);

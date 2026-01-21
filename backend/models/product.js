@@ -2,42 +2,111 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
-    name: {
+    // Basic Details
+    productName: {type: String,required: true,trim: true,
+    },
+    brandName: {
       type: String,
       required: true,
       trim: true,
     },
-
-    brand: {
+    category: {
       type: String,
       required: true,
     },
+    shortDescription: {
+      type: String,
+      maxlength: 500,
+    },
+    fullDescription: {
+      type: String,
+    },
 
+    // Pricing & Stock
     price: {
       type: Number,
       required: true,
     },
+    discountPrice: {
+      type: Number,
+      default: 0,
+    },
+    stockQuantity: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    stockStatus: {
+      type: String,
+      enum: ["in_stock", "out_of_stock"],
+      required: true,
+    },
+    minOrderQuantity: {
+      type: Number,
+      default: 1,
+      min: 1,
+    },
 
-    description: {
+    // Watch Specifications
+    watchType: {
+      type: String,
+      enum: ["Analog", "Digital", "Smart"],
+    },
+    strapMaterial: {
+      type: String,
+    },
+    strapColor: {
+      type: String,
+    },
+    dialColor: {
+      type: String,
+    },
+    displayType: {
+      type: String,
+    },
+    waterResistance: {
+      type: String,
+    },
+    movementType: {
+      type: String,
+    },
+    glassType: {
+      type: String,
+    },
+    warrantyPeriod: {
       type: String,
     },
 
-  images: [
-    {
-      url: { type: String, required: true },
-      public_id: { type: String, required: true },
+    // Shipping & Policy
+    shippingCharges: {
+      type: Number,
+      default: 0,
     },
-  ],
+    deliveryTime: {
+      type: String,
+    },
+    returnPolicy: {
+      type: String,
+    },
 
- inStock: { type: Boolean, default: true },
+    // Images
+    images: [
+      {
+        url: { type: String, required: true },
+        public_id: { type: String, required: true },
+      },
+    ],
 
-  countInStock: { type: Number, default: 0 },
+    // ✅ Product Video
+    productVideo: {
+      url: { type: String },
+      public_id: { type: String },
+    },
   },
   {
-    timestamps: true, // createdAt, updatedAt
-  }
+    timestamps: true,
+  },
 );
 
 const product = mongoose.model("Product", productSchema);
-
 export default product;

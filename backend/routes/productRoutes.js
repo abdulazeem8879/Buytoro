@@ -7,29 +7,37 @@ import {
   deleteProduct,
 } from "../controllers/productController.js";
 
-import { uploadImages } from "../middlewares/uploadMiddleware.js";
-import { protect, admin } from "../middlewares/authMiddleware.js"; // ✅ ADD
+import { uploadProductMedia } from "../middlewares/uploadMiddleware.js";
+import { protect, admin } from "../middlewares/authMiddleware.js";
 
 const productRouter = express.Router();
 
-// PUBLIC ROUTES
-productRouter.route("/").get(getAllProducts);
+// 🔓 PUBLIC
+productRouter.get("/", getAllProducts);
+productRouter.get("/:id", getProductById);
 
-// ADMIN ONLY (CREATE PRODUCT)
-productRouter.route("/").post(
+// 🔐 ADMIN ONLY
+productRouter.post(
+  "/",
   protect,
   admin,
-  uploadImages,
+  uploadProductMedia,
   createProduct
 );
 
-//  PUBLIC
-productRouter.route("/:id").get(getProductById);
+productRouter.put(
+  "/:id",
+  protect,
+  admin,
+  uploadProductMedia,
+  updateProduct
+);
 
-// ADMIN ONLY (UPDATE + DELETE)
-productRouter
-  .route("/:id")
-  .put(protect, admin, uploadImages, updateProduct)
-  .delete(protect, admin, deleteProduct);
+productRouter.delete(
+  "/:id",
+  protect,
+  admin,
+  deleteProduct
+);
 
 export default productRouter;
