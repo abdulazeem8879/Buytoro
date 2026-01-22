@@ -5,6 +5,7 @@ import {
   getUserProfile,
   updateUserProfile,
   changePassword,
+  getAllUsers,
 } from "../controllers/userController.js";
 
 import { protect, admin } from "../middlewares/authMiddleware.js";
@@ -34,16 +35,13 @@ userRouter.put(
 );
 
 // CHANGE PASSWORD
-userRouter.put(
-  "/change-password",
-  protect,
-  changePassword
-);
+userRouter.put("/change-password", protect, changePassword);
 
 /* ===========================
-   (Future) ADMIN ROUTES
+   ADMIN
    =========================== */
-// example:
-// userRouter.get("/admin/users", protect, admin, getAllUsers);
+
+// GET all users (ADMIN ONLY)
+userRouter.get("/", protect, admin, getAllUsers);
 
 export default userRouter;

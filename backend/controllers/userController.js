@@ -60,7 +60,6 @@ export const loginUser = async (req, res, next) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // 🔥 update last login
     user.lastLogin = new Date();
     await user.save();
 
@@ -83,9 +82,7 @@ export const loginUser = async (req, res, next) => {
    =========================== */
 export const getUserProfile = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id).select(
-      "-password"
-    );
+    const user = await User.findById(req.user._id).select("-password");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -98,7 +95,7 @@ export const getUserProfile = async (req, res, next) => {
 };
 
 /* ===========================
-   UPDATE PROFILE (NAME + IMAGE)
+   UPDATE PROFILE
    =========================== */
 export const updateUserProfile = async (req, res, next) => {
   try {
@@ -108,14 +105,11 @@ export const updateUserProfile = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // update name
     if (req.body.name) {
       user.name = req.body.name;
     }
 
-    // update profile image
     if (req.file) {
-      // delete old image from cloudinary
       if (user.profileImage?.public_id) {
         await cloudinary.uploader.destroy(
           user.profileImage.public_id
@@ -184,21 +178,28 @@ export const deleteAccount = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // 🔥 delete profile image from cloudinary (if exists)
     if (user.profileImage?.public_id) {
       await cloudinary.uploader.destroy(
         user.profileImage.public_id
       );
     }
 
-    // ❌ delete user from database
     await user.deleteOne();
 
-    res.json({
-      message: "Account deleted successfully",
-    });
+    res.json({ message: "Account deleted successfully" });
   } catch (error) {
     next(error);
   }
 };
 
+/* ===========================
+   ADMIN – GET ALL USERS
+   =========================== */
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({}).select("-password");
+    res.json(users);
+  } catch (error) {
+    next(error);
+  }
+};

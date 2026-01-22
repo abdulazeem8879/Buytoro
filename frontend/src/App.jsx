@@ -24,6 +24,7 @@ import EditProfile from "./pages/profile/EditProfile";
 import ChangePassword from "./pages/profile/ChangePassword";
 import Security from "./pages/profile/Security";
 import AdminOrderList from "./admin/pages/AdminOrderList";
+import AdminUsers from "./admin/pages/AdminUsers";
 
 const App = () => {
   return (
@@ -106,6 +107,8 @@ const App = () => {
         <Route path="products/add" element={<AdminAddProduct />} />
         <Route path="products/:id/edit" element={<AdminEditProduct />} />
         <Route path="orders" element={<AdminOrderList />} />
+        <Route path="users" element={<AdminUsers />} />
+
       </Route>
     </Routes>
   );
