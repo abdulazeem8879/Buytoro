@@ -1,12 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import ProfileImageModal from "./ProfileImageModal";
 
 const DEFAULT_AVATAR =
   "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
 const Profile = () => {
   const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const [openImageModal, setOpenImageModal] = useState(false);
 
   if (!user) return <p>Loading profile...</p>;
 
@@ -17,7 +21,8 @@ const Profile = () => {
         <img
           src={user.profileImage?.url || DEFAULT_AVATAR}
           alt="Profile"
-          className="w-28 h-28 rounded-full object-cover border"
+          onClick={() => setOpenImageModal(true)}
+          className="w-28 h-28 rounded-full object-cover border cursor-pointer hover:opacity-80 transition"
         />
 
         <div>
@@ -96,7 +101,7 @@ const Profile = () => {
         </p>
       </section>
 
-      {/* ===== SECURITY & CONTROL ===== */}
+      {/* ===== SECURITY ===== */}
       <section className="mt-8 bg-white p-6 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4">
           Security & Control
@@ -147,6 +152,14 @@ const Profile = () => {
           Logout
         </button>
       </div>
+
+      {/* ===== PROFILE IMAGE MODAL ===== */}
+      <ProfileImageModal
+        isOpen={openImageModal}
+        onClose={() => setOpenImageModal(false)}
+        imageUrl={user.profileImage?.url}
+        onChangeProfile={() => navigate("/profile/edit")}
+      />
     </div>
   );
 };

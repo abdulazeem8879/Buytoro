@@ -25,6 +25,8 @@ import ChangePassword from "./pages/profile/ChangePassword";
 import Security from "./pages/profile/Security";
 import AdminOrderList from "./admin/pages/AdminOrderList";
 import AdminUsers from "./admin/pages/AdminUsers";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 const App = () => {
   return (
@@ -36,6 +38,9 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/terms" element={<Terms />} />
+<Route path="/privacy" element={<Privacy />} />
+
 
         {/* protected routes */}
         <Route

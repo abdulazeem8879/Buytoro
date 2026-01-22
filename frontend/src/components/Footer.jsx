@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="mt-16 bg-slate-900 text-gray-300">
-      {/* Top Section */}
-      <div className="max-w-7xl mx-auto px-6 py-12 grid gap-10 sm:grid-cols-2 md:grid-cols-3">
-        
-        {/* Brand */}
+      {/* ===== TOP SECTION ===== */}
+      <div className="max-w-7xl mx-auto px-6 py-12 grid gap-10 sm:grid-cols-2 md:grid-cols-4">
+
+        {/* BRAND */}
         <div className="space-y-3">
           <h3 className="text-2xl font-bold text-white">
             BuyToro
@@ -22,34 +22,40 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Quick Links */}
+        {/* QUICK LINKS */}
         <div className="space-y-3">
           <h4 className="text-lg font-semibold text-white">
             Quick Links
           </h4>
-          <nav className="flex flex-col gap-2">
-            <Link
-              to="/"
-              className="hover:text-blue-400 transition"
-            >
+          <nav className="flex flex-col gap-2 text-sm">
+            <Link to="/" className="hover:text-blue-400 transition">
               Home
             </Link>
-            <Link
-              to="/cart"
-              className="hover:text-blue-400 transition"
-            >
+            <Link to="/cart" className="hover:text-blue-400 transition">
               Cart
             </Link>
-            <Link
-              to="/profile"
-              className="hover:text-blue-400 transition"
-            >
+            <Link to="/profile" className="hover:text-blue-400 transition">
               Profile
             </Link>
           </nav>
         </div>
 
-        {/* Trust Info */}
+        {/* LEGAL */}
+        <div className="space-y-3">
+          <h4 className="text-lg font-semibold text-white">
+            Legal
+          </h4>
+          <nav className="flex flex-col gap-2 text-sm">
+            <Link to="/terms" className="hover:text-blue-400 transition">
+              Terms & Conditions
+            </Link>
+            <Link to="/privacy" className="hover:text-blue-400 transition">
+              Privacy Policy
+            </Link>
+          </nav>
+        </div>
+
+        {/* TRUST INFO */}
         <div className="space-y-3">
           <h4 className="text-lg font-semibold text-white">
             Why BuyToro?
@@ -62,7 +68,7 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* ===== BOTTOM BAR ===== */}
       <div className="bg-slate-950 text-center py-4 text-sm text-gray-400">
         © {new Date().getFullYear()} BuyToro. All rights reserved.
       </div>

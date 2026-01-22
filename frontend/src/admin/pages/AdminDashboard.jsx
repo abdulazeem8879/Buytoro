@@ -31,7 +31,11 @@ const AdminDashboard = () => {
 
         const products = productsRes.data.length;
         const orders = ordersRes.data;
-        const users = usersRes.data.length;
+
+        // ✅ ADMIN USERS EXCLUDED
+        const normalUsers = usersRes.data.filter(
+          (user) => !user.isAdmin
+        );
 
         const paidOrders = orders.filter((o) => o.isPaid);
         const deliveredOrders = orders.filter((o) => o.isDelivered);
@@ -44,7 +48,7 @@ const AdminDashboard = () => {
         setStats({
           products,
           orders: orders.length,
-          users,
+          users: normalUsers.length, // 👈 only customers
           revenue,
           paidOrders: paidOrders.length,
           unpaidOrders: orders.length - paidOrders.length,
@@ -105,7 +109,9 @@ const AdminDashboard = () => {
               <td>{order.user?.email || "N/A"}</td>
               <td>₹{order.totalPrice}</td>
               <td align="center">{order.isPaid ? "Yes" : "No"}</td>
-              <td align="center">{order.isDelivered ? "Yes" : "No"}</td>
+              <td align="center">
+                {order.isDelivered ? "Yes" : "No"}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -117,7 +123,9 @@ const AdminDashboard = () => {
 const StatCard = ({ title, value }) => (
   <div style={cardStyle}>
     <h3>{title}</h3>
-    <p style={{ fontSize: "20px", fontWeight: "bold" }}>{value}</p>
+    <p style={{ fontSize: "20px", fontWeight: "bold" }}>
+      {value}
+    </p>
   </div>
 );
 

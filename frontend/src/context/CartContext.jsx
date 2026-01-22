@@ -20,12 +20,16 @@ const CartProvider = ({ children }) => {
 
   // Add to cart
   const addToCart = (product, qty) => {
-    const existItem = cartItems.find((x) => x._id === product._id);
+    const existItem = cartItems.find(
+      (x) => x._id === product._id
+    );
 
     if (existItem) {
       setCartItems(
         cartItems.map((x) =>
-          x._id === existItem._id ? { ...x, qty: x.qty + qty } : x
+          x._id === existItem._id
+            ? { ...x, qty: x.qty + qty }
+            : x
         )
       );
     } else {
@@ -44,12 +48,26 @@ const CartProvider = ({ children }) => {
 
   // Remove item
   const removeFromCart = (id) => {
-    setCartItems(cartItems.filter((item) => item._id !== id));
+    setCartItems(
+      cartItems.filter((item) => item._id !== id)
+    );
+  };
+
+  // ✅ CLEAR CART (ORDER SUCCESS)
+  const clearCart = () => {
+    setCartItems([]);
+    localStorage.removeItem("cartItems");
   };
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, updateQty, removeFromCart }}
+      value={{
+        cartItems,
+        addToCart,
+        updateQty,
+        removeFromCart,
+        clearCart, // 👈 exposed
+      }}
     >
       {children}
     </CartContext.Provider>

@@ -1,36 +1,54 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Package,
-  Tag,
-  DollarSign,
-  FileText,
-  ImagePlus,
-  Save,
-} from "lucide-react";
+import { Save, Image, Video } from "lucide-react";
 import api from "../../services/api";
+
+const inputClass =
+  "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500";
+const textareaClass =
+  "w-full px-3 py-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500";
+const selectClass =
+  "w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500";
 
 const AdminEditProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // 🔑 Schema-based states
+  // BASIC
   const [productName, setProductName] = useState("");
   const [brandName, setBrandName] = useState("");
   const [category, setCategory] = useState("");
+  const [shortDescription, setShortDescription] = useState("");
+  const [fullDescription, setFullDescription] = useState("");
+
+  // PRICE & STOCK
   const [price, setPrice] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
-  const [stockQuantity, setStockQuantity] = useState(0);
-  const [shortDescription, setShortDescription] = useState("");
+  const [stockQuantity, setStockQuantity] = useState("");
+  const [stockStatus, setStockStatus] = useState("in_stock");
 
+  // WATCH SPECS
+  const [watchType, setWatchType] = useState("");
+  const [strapMaterial, setStrapMaterial] = useState("");
+  const [strapColor, setStrapColor] = useState("");
+  const [dialColor, setDialColor] = useState("");
+  const [waterResistance, setWaterResistance] = useState("");
+  const [warrantyPeriod, setWarrantyPeriod] = useState("");
+
+  // SHIPPING
+  const [shippingCharges, setShippingCharges] = useState(0);
+  const [deliveryTime, setDeliveryTime] = useState("");
+  const [returnPolicy, setReturnPolicy] = useState("");
+
+  // MEDIA
   const [existingImages, setExistingImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
+  const [video, setVideo] = useState(null);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch product
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -39,12 +57,27 @@ const AdminEditProduct = () => {
         setProductName(data.productName);
         setBrandName(data.brandName);
         setCategory(data.category);
+        setShortDescription(data.shortDescription || "");
+        setFullDescription(data.fullDescription || "");
+
         setPrice(data.price);
         setDiscountPrice(data.discountPrice || "");
-        setStockQuantity(data.stockQuantity || 0);
-        setShortDescription(data.shortDescription || "");
+        setStockQuantity(data.stockQuantity || "");
+        setStockStatus(data.stockStatus || "in_stock");
+
+        setWatchType(data.watchType || "");
+        setStrapMaterial(data.strapMaterial || "");
+        setStrapColor(data.strapColor || "");
+        setDialColor(data.dialColor || "");
+        setWaterResistance(data.waterResistance || "");
+        setWarrantyPeriod(data.warrantyPeriod || "");
+
+        setShippingCharges(data.shippingCharges || 0);
+        setDeliveryTime(data.deliveryTime || "");
+        setReturnPolicy(data.returnPolicy || "");
+
         setExistingImages(data.images || []);
-      } catch (err) {
+      } catch {
         setError("Failed to load product");
       } finally {
         setLoading(false);
@@ -54,10 +87,6 @@ const AdminEditProduct = () => {
     fetchProduct();
   }, [id]);
 
-  const handleImageChange = (e) => {
-    setNewImages(e.target.files);
-  };
-
   const submitHandler = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -66,188 +95,112 @@ const AdminEditProduct = () => {
     try {
       const formData = new FormData();
 
-      // 🔑 Schema-aligned fields
       formData.append("productName", productName);
       formData.append("brandName", brandName);
       formData.append("category", category);
+      formData.append("shortDescription", shortDescription);
+      formData.append("fullDescription", fullDescription);
+
       formData.append("price", price);
       formData.append("discountPrice", discountPrice);
       formData.append("stockQuantity", stockQuantity);
-      formData.append("shortDescription", shortDescription);
+      formData.append("stockStatus", stockStatus);
 
-      if (newImages.length > 0) {
-        for (let i = 0; i < newImages.length; i++) {
-          formData.append("images", newImages[i]);
-        }
-      }
+      formData.append("watchType", watchType);
+      formData.append("strapMaterial", strapMaterial);
+      formData.append("strapColor", strapColor);
+      formData.append("dialColor", dialColor);
+      formData.append("waterResistance", waterResistance);
+      formData.append("warrantyPeriod", warrantyPeriod);
 
-      await api.put(`/products/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      formData.append("shippingCharges", shippingCharges);
+      formData.append("deliveryTime", deliveryTime);
+      formData.append("returnPolicy", returnPolicy);
 
+      newImages.forEach((img) => formData.append("images", img));
+      if (video) formData.append("productVideo", video);
+
+      await api.put(`/products/${id}`, formData);
       navigate("/admin/products");
-    } catch (err) {
+    } catch {
       setError("Failed to update product");
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64 text-lg font-semibold">
-        Loading product...
-      </div>
-    );
-  }
+  if (loading) return <p className="p-6">Loading...</p>;
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
-        <Package className="text-blue-600" />
-        Edit Product
-      </h1>
+    <div className="max-w-6xl mx-auto p-6">
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <h1 className="text-2xl font-bold mb-6">Edit Product</h1>
 
-      {error && (
-        <div className="mb-4 bg-red-100 text-red-700 px-4 py-2 rounded">
-          {error}
-        </div>
-      )}
+        {error && (
+          <p className="mb-4 text-red-600 bg-red-50 px-3 py-2 rounded">
+            {error}
+          </p>
+        )}
 
-      <form
-        onSubmit={submitHandler}
-        className="bg-white shadow rounded-lg p-6 space-y-5"
-      >
-        {/* Product Name */}
-        <div>
-          <label className="flex items-center gap-2 font-medium mb-1">
-            <Package size={18} /> Product Name
-          </label>
-          <input
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-            required
-            className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-          />
-        </div>
+        <form onSubmit={submitHandler} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input className={inputClass} value={productName} onChange={(e)=>setProductName(e.target.value)} placeholder="Product Name" required />
+          <input className={inputClass} value={brandName} onChange={(e)=>setBrandName(e.target.value)} placeholder="Brand Name" required />
+          <input className={inputClass} value={category} onChange={(e)=>setCategory(e.target.value)} placeholder="Category" required />
 
-        {/* Brand */}
-        <div>
-          <label className="flex items-center gap-2 font-medium mb-1">
-            <Tag size={18} /> Brand
-          </label>
-          <input
-            value={brandName}
-            onChange={(e) => setBrandName(e.target.value)}
-            required
-            className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-          />
-        </div>
+          <input type="number" className={inputClass} value={price} onChange={(e)=>setPrice(e.target.value)} placeholder="Price" required />
+          <input type="number" className={inputClass} value={discountPrice} onChange={(e)=>setDiscountPrice(e.target.value)} placeholder="Discount Price" />
+          <input type="number" className={inputClass} value={stockQuantity} onChange={(e)=>setStockQuantity(e.target.value)} placeholder="Stock Quantity" />
 
-        {/* Category */}
-        <div>
-          <label className="font-medium mb-1 block">Category</label>
-          <input
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
-            className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-          />
-        </div>
+          <select className={selectClass} value={stockStatus} onChange={(e)=>setStockStatus(e.target.value)}>
+            <option value="in_stock">In Stock</option>
+            <option value="out_of_stock">Out of Stock</option>
+          </select>
 
-        {/* Price */}
-        <div>
-          <label className="flex items-center gap-2 font-medium mb-1">
-            <DollarSign size={18} /> Price
-          </label>
-          <input
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-            className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-          />
-        </div>
+          <select className={selectClass} value={watchType} onChange={(e)=>setWatchType(e.target.value)}>
+            <option value="">Watch Type</option>
+            <option value="Analog">Analog</option>
+            <option value="Digital">Digital</option>
+            <option value="Smart">Smart</option>
+          </select>
 
-        {/* Discount Price */}
-        <div>
-          <label className="font-medium mb-1 block">Discount Price</label>
-          <input
-            type="number"
-            value={discountPrice}
-            onChange={(e) => setDiscountPrice(e.target.value)}
-            className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-          />
-        </div>
+          <input className={inputClass} value={strapMaterial} onChange={(e)=>setStrapMaterial(e.target.value)} placeholder="Strap Material" />
+          <input className={inputClass} value={strapColor} onChange={(e)=>setStrapColor(e.target.value)} placeholder="Strap Color" />
+          <input className={inputClass} value={dialColor} onChange={(e)=>setDialColor(e.target.value)} placeholder="Dial Color" />
+          <input className={inputClass} value={waterResistance} onChange={(e)=>setWaterResistance(e.target.value)} placeholder="Water Resistance" />
+          <input className={inputClass} value={warrantyPeriod} onChange={(e)=>setWarrantyPeriod(e.target.value)} placeholder="Warranty Period" />
 
-        {/* Short Description */}
-        <div>
-          <label className="flex items-center gap-2 font-medium mb-1">
-            <FileText size={18} /> Short Description
-          </label>
-          <textarea
-            value={shortDescription}
-            onChange={(e) => setShortDescription(e.target.value)}
-            rows="4"
-            className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-          />
-        </div>
+          <textarea className={textareaClass} value={shortDescription} onChange={(e)=>setShortDescription(e.target.value)} placeholder="Short Description" />
+          <textarea className={textareaClass} value={fullDescription} onChange={(e)=>setFullDescription(e.target.value)} placeholder="Full Description" />
 
-        {/* Stock */}
-        <div>
-          <label className="font-medium mb-1 block">Stock Quantity</label>
-          <input
-            type="number"
-            value={stockQuantity}
-            onChange={(e) => setStockQuantity(e.target.value)}
-            className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-          />
-        </div>
+          <input type="number" className={inputClass} value={shippingCharges} onChange={(e)=>setShippingCharges(e.target.value)} placeholder="Shipping Charges" />
+          <input className={inputClass} value={deliveryTime} onChange={(e)=>setDeliveryTime(e.target.value)} placeholder="Delivery Time" />
+          <input className={inputClass} value={returnPolicy} onChange={(e)=>setReturnPolicy(e.target.value)} placeholder="Return Policy" />
 
-        {/* Existing Images */}
-        <div>
-          <label className="font-medium mb-2 block">Current Images</label>
-          <div className="flex gap-3 flex-wrap">
+          <div className="col-span-2 flex gap-3 flex-wrap">
             {existingImages.map((img, i) => (
-              <img
-                key={i}
-                src={img.url}
-                alt="product"
-                className="w-20 h-20 object-cover border rounded"
-              />
+              <img key={i} src={img.url} className="w-20 h-20 object-cover rounded border" />
             ))}
           </div>
-        </div>
 
-        {/* Replace Images */}
-        <div>
-          <label className="flex items-center gap-2 font-medium mb-1">
-            <ImagePlus size={18} /> Replace Images
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <Image size={18} /> Upload Images
+            <input type="file" multiple hidden onChange={(e)=>setNewImages([...e.target.files])} />
           </label>
-          <input
-            type="file"
-            multiple
-            onChange={handleImageChange}
-            className="block w-full text-sm text-gray-600
-              file:mr-4 file:py-2 file:px-4
-              file:rounded file:border-0
-              file:bg-blue-50 file:text-blue-700
-              hover:file:bg-blue-100"
-          />
-        </div>
 
-        {/* Submit */}
-        <div className="pt-4">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <Video size={18} /> Upload Video
+            <input type="file" accept="video/*" hidden onChange={(e)=>setVideo(e.target.files[0])} />
+          </label>
+
           <button
-            type="submit"
+            className="col-span-2 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
             disabled={saving}
-            className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-60"
           >
             <Save size={18} />
             {saving ? "Updating..." : "Update Product"}
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

@@ -11,7 +11,13 @@ const AdminUsers = () => {
       try {
         setLoading(true);
         const { data } = await api.get("/users");
-        setUsers(data);
+
+        // ✅ ADMIN USERS EXCLUDED
+        const normalUsers = data.filter(
+          (user) => !user.isAdmin
+        );
+
+        setUsers(normalUsers);
       } catch (err) {
         setError("Failed to load users");
       } finally {
@@ -43,9 +49,7 @@ const AdminUsers = () => {
             <tr key={user._id}>
               <td>{user.name}</td>
               <td>{user.email}</td>
-              <td align="center">
-                {user.isAdmin ? "Yes" : "No"}
-              </td>
+              <td align="center">No</td>
               <td>
                 {user.createdAt
                   ? new Date(user.createdAt).toLocaleDateString()

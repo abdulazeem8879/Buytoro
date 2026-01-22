@@ -5,7 +5,7 @@ import { createOrder } from "../services/orderService";
 import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = () => {
-  const { cartItems } = useContext(CartContext);
+  const { cartItems, clearCart } = useContext(CartContext); // ✅ clearCart added
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -52,6 +52,9 @@ const PlaceOrder = () => {
       };
 
       const createdOrder = await createOrder(orderData);
+
+      clearCart(); // ✅ CART CLEARED AFTER ORDER SUCCESS
+
       navigate(`/order/${createdOrder._id}`);
     } catch (error) {
       alert("Failed to place order");
