@@ -2,10 +2,12 @@ import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
+import { useAlert } from "../context/AlertContext";
 
 const Register = () => {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const { showAlert } = useAlert();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -13,14 +15,12 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      showAlert("Passwords do not match", "error");
       return;
     }
 
@@ -36,10 +36,13 @@ const Register = () => {
       // 🔥 auto login after register
       login(data);
 
+      showAlert("Account created successfully", "success");
+
       navigate("/");
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Registration failed"
+      showAlert(
+        err.response?.data?.message || "Registration failed",
+        "error"
       );
     } finally {
       setLoading(false);
@@ -52,12 +55,6 @@ const Register = () => {
         <h1 className="text-2xl font-bold text-center mb-6">
           Create Account
         </h1>
-
-        {error && (
-          <p className="mb-4 text-red-600 bg-red-100 p-2 rounded">
-            {error}
-          </p>
-        )}
 
         <form onSubmit={submitHandler} className="space-y-4">
           <div>
@@ -119,7 +116,7 @@ const Register = () => {
             disabled={loading}
             className={`w-full py-2 text-white rounded ${
               loading
-                ? "bg-gray-400"
+                ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"
             }`}
           >

@@ -27,6 +27,8 @@ import AdminOrderList from "./admin/pages/AdminOrderList";
 import AdminUsers from "./admin/pages/AdminUsers";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import MyOrders from "./pages/MyOrders";
+import Contact from "./pages/Contact";
 
 const App = () => {
   return (
@@ -39,8 +41,7 @@ const App = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/terms" element={<Terms />} />
-<Route path="/privacy" element={<Privacy />} />
-
+        <Route path="/privacy" element={<Privacy />} />
 
         {/* protected routes */}
         <Route
@@ -96,6 +97,25 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+       
+       <Route path="/my-orders" 
+       element={<ProtectedRoute>
+<MyOrders/>
+
+       </ProtectedRoute>} />
+
+    
+
+   <Route
+          path="/contact"
+          element={
+            <ProtectedRoute>
+              <Contact />
+            </ProtectedRoute>
+          }
+        />
+
+
       </Route>
 
       {/* admin routes */}
@@ -113,7 +133,6 @@ const App = () => {
         <Route path="products/:id/edit" element={<AdminEditProduct />} />
         <Route path="orders" element={<AdminOrderList />} />
         <Route path="users" element={<AdminUsers />} />
-
       </Route>
     </Routes>
   );

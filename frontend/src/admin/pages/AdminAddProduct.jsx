@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PackagePlus, Image, Video, X } from "lucide-react";
 import api from "../../services/api";
+import { useAlert } from "../../context/AlertContext";
 
 const AdminAddProduct = () => {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   // BASIC
   const [productName, setProductName] = useState("");
@@ -24,7 +26,6 @@ const AdminAddProduct = () => {
   const [video, setVideo] = useState(null);
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   /* ================= IMAGE HANDLERS ================= */
 
@@ -42,7 +43,9 @@ const AdminAddProduct = () => {
 
   const removeImage = (index) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) =>
+      prev.filter((_, i) => i !== index)
+    );
   };
 
   /* ================= SUBMIT ================= */
@@ -50,7 +53,6 @@ const AdminAddProduct = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
       const formData = new FormData();
@@ -58,19 +60,41 @@ const AdminAddProduct = () => {
       formData.append("productName", productName);
       formData.append("brandName", brandName);
       formData.append("category", category);
-      formData.append("shortDescription", shortDescription);
-      formData.append("fullDescription", fullDescription);
+      formData.append(
+        "shortDescription",
+        shortDescription
+      );
+      formData.append(
+        "fullDescription",
+        fullDescription
+      );
       formData.append("price", price);
-      formData.append("discountPrice", discountPrice);
-      formData.append("stockQuantity", stockQuantity);
+      formData.append(
+        "discountPrice",
+        discountPrice
+      );
+      formData.append(
+        "stockQuantity",
+        stockQuantity
+      );
 
-      images.forEach((img) => formData.append("images", img));
-      if (video) formData.append("productVideo", video);
+      images.forEach((img) =>
+        formData.append("images", img)
+      );
+      if (video)
+        formData.append("productVideo", video);
 
       await api.post("/products", formData);
+
+      showAlert("Product added successfully", "success");
+
       navigate("/admin/products");
-    } catch {
-      setError("Failed to add product");
+    } catch (err) {
+      showAlert(
+        err.response?.data?.message ||
+          "Failed to add product",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -79,7 +103,8 @@ const AdminAddProduct = () => {
   const inputClass =
     "w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-200";
 
-  const sectionClass = "bg-gray-50 p-4 rounded-xl border space-y-4"; 
+  const sectionClass =
+    "bg-gray-50 p-4 rounded-xl border space-y-4";
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white rounded-2xl shadow">
@@ -88,33 +113,92 @@ const AdminAddProduct = () => {
         Add Product
       </h1>
 
-      {error && (
-        <p className="bg-red-100 text-red-600 px-4 py-2 rounded mb-4">
-          {error}
-        </p>
-      )}
-
-      <form onSubmit={submitHandler} className="space-y-6">
+      <form
+        onSubmit={submitHandler}
+        className="space-y-6"
+      >
         {/* BASIC */}
         <div className={sectionClass}>
-          <h2 className="font-semibold">Basic Info</h2>
+          <h2 className="font-semibold">
+            Basic Info
+          </h2>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input className={inputClass} placeholder="Product Name" onChange={(e)=>setProductName(e.target.value)} required />
-            <input className={inputClass} placeholder="Brand Name" onChange={(e)=>setBrandName(e.target.value)} required />
-            <input className={inputClass} placeholder="Category" onChange={(e)=>setCategory(e.target.value)} required />
+            <input
+              className={inputClass}
+              placeholder="Product Name"
+              onChange={(e) =>
+                setProductName(e.target.value)
+              }
+              required
+            />
+            <input
+              className={inputClass}
+              placeholder="Brand Name"
+              onChange={(e) =>
+                setBrandName(e.target.value)
+              }
+              required
+            />
+            <input
+              className={inputClass}
+              placeholder="Category"
+              onChange={(e) =>
+                setCategory(e.target.value)
+              }
+              required
+            />
           </div>
 
-          <textarea className={inputClass} placeholder="Short Description" onChange={(e)=>setShortDescription(e.target.value)} />
-          <textarea className={inputClass} placeholder="Full Description" rows="4" onChange={(e)=>setFullDescription(e.target.value)} />
+          <textarea
+            className={inputClass}
+            placeholder="Short Description"
+            onChange={(e) =>
+              setShortDescription(e.target.value)
+            }
+          />
+          <textarea
+            className={inputClass}
+            placeholder="Full Description"
+            rows="4"
+            onChange={(e) =>
+              setFullDescription(e.target.value)
+            }
+          />
         </div>
 
         {/* PRICE */}
         <div className={sectionClass}>
-          <h2 className="font-semibold">Price & Stock</h2>
+          <h2 className="font-semibold">
+            Price & Stock
+          </h2>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input type="number" className={inputClass} placeholder="Price" onChange={(e)=>setPrice(e.target.value)} required />
-            <input type="number" className={inputClass} placeholder="Discount Price" onChange={(e)=>setDiscountPrice(e.target.value)} />
-            <input type="number" className={inputClass} placeholder="Stock Quantity" onChange={(e)=>setStockQuantity(e.target.value)} />
+            <input
+              type="number"
+              className={inputClass}
+              placeholder="Price"
+              onChange={(e) =>
+                setPrice(e.target.value)
+              }
+              required
+            />
+            <input
+              type="number"
+              className={inputClass}
+              placeholder="Discount Price"
+              onChange={(e) =>
+                setDiscountPrice(e.target.value)
+              }
+            />
+            <input
+              type="number"
+              className={inputClass}
+              placeholder="Stock Quantity"
+              onChange={(e) =>
+                setStockQuantity(e.target.value)
+              }
+            />
           </div>
         </div>
 
@@ -124,34 +208,49 @@ const AdminAddProduct = () => {
             <Image size={18} /> Media
           </h2>
 
-          {/* IMAGE BUTTON */}
           <div className="flex gap-4">
+            <label className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white w-48 px-4 py-2 rounded cursor-pointer">
+              <Image size={18} />
+              Upload Images
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                hidden
+                onChange={handleImageChange}
+              />
+            </label>
 
-<label className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white w-48 px-4 py-2 rounded cursor-pointer">
-  <Image size={18} />
-  Upload Images
-  <input
-    type="file"
-    multiple
-    accept="image/*"
-    hidden
-    onChange={handleImageChange}
-  />
-</label>
+            <label className="inline-flex items-center justify-center gap-2 bg-gray-700 text-white w-48 px-4 py-2 rounded cursor-pointer">
+              <Video size={18} />
+              Upload Video
+              <input
+                type="file"
+                accept="video/*"
+                hidden
+                onChange={(e) =>
+                  setVideo(e.target.files[0])
+                }
+              />
+            </label>
+          </div>
 
-
-          {/* IMAGE PREVIEWS */}
           {imagePreviews.length > 0 && (
             <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-4">
               {imagePreviews.map((img, i) => (
-                <div key={i} className="relative">
+                <div
+                  key={i}
+                  className="relative"
+                >
                   <img
                     src={img}
                     className="h-24 w-full object-cover rounded-lg border"
                   />
                   <button
                     type="button"
-                    onClick={() => removeImage(i)}
+                    onClick={() =>
+                      removeImage(i)
+                    }
                     className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1"
                   >
                     <X size={14} />
@@ -159,27 +258,6 @@ const AdminAddProduct = () => {
                 </div>
               ))}
             </div>
-          )}
-
-          {/* VIDEO BUTTON */}
-          <label className="inline-flex items-center justify-center gap-2 bg-gray-700 text-white w-48 px-4 py-2 rounded cursor-pointer">
-  <Video size={18} />
-  Upload Video
-  <input
-    type="file"
-    accept="video/*"
-    hidden
-    onChange={(e) => setVideo(e.target.files[0])}
-  />
-</label>
-
-
-          </div>
-
-          {video && (
-            <p className="text-sm text-gray-600 mt-2">
-              Selected video: {video.name}
-            </p>
           )}
         </div>
 

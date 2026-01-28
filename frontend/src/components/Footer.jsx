@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -37,6 +38,9 @@ const Footer = () => {
             <Link to="/profile" className="hover:text-blue-400 transition">
               Profile
             </Link>
+              <Link to="/contact" className="hover:text-blue-400 transition">
+              Contact
+            </Link>
           </nav>
         </div>
 
@@ -55,16 +59,58 @@ const Footer = () => {
           </nav>
         </div>
 
-        {/* TRUST INFO */}
-        <div className="space-y-3">
+        {/* WHY BUYTORO */}
+        <div className="space-y-4">
           <h4 className="text-lg font-semibold text-white">
             Why BuyToro?
           </h4>
+
           <ul className="space-y-2 text-sm">
-            <li>✔ 100% Original Products</li>
-            <li>✔ Secure Payments</li>
-            <li>✔ Fast Delivery</li>
+            <li className="flex items-center gap-2">
+              <span className="text-green-500">✔</span>
+              100% Original Products
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-green-500">✔</span>
+              Secure Payments
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-green-500">✔</span>
+              Fast Delivery
+            </li>
           </ul>
+
+          {/* SOCIAL MEDIA ICONS */}
+          <div className="flex gap-4 pt-2">
+            <a
+              href="#"
+              className="hover:text-blue-400 transition"
+              aria-label="Facebook"
+            >
+              <Facebook size={18} />
+            </a>
+            <a
+              href="#"
+              className="hover:text-pink-400 transition"
+              aria-label="Instagram"
+            >
+              <Instagram size={18} />
+            </a>
+            <a
+              href="#"
+              className="hover:text-sky-400 transition"
+              aria-label="Twitter"
+            >
+              <Twitter size={18} />
+            </a>
+            <a
+              href="#"
+              className="hover:text-blue-500 transition"
+              aria-label="LinkedIn"
+            >
+              <Linkedin size={18} />
+            </a>
+          </div>
         </div>
       </div>
 

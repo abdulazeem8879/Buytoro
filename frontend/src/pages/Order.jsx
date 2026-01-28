@@ -1,34 +1,58 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getOrderById } from "../services/orderService";
+import { useAlert } from "../context/AlertContext";
 
 const Order = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { showAlert } = useAlert();
+
   const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrder = async () => {
-      const data = await getOrderById(id);
-      setOrder(data);
+      try {
+        setLoading(true);
+        const data = await getOrderById(id);
+        setOrder(data);
+      } catch (error) {
+        showAlert(
+          error.response?.data?.message ||
+            "Failed to fetch order",
+          "error"
+        );
+        navigate("/");
+      } finally {
+        setLoading(false);
+      }
     };
-    fetchOrder();
-  }, [id]);
 
-  if (!order)
+    fetchOrder();
+  }, [id, navigate, showAlert]);
+
+  if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <h2 className="text-xl font-semibold">Loading order...</h2>
+        <h2 className="text-xl font-semibold">
+          Loading order...
+        </h2>
       </div>
     );
+
+  if (!order) return null;
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
       <div className="max-w-5xl mx-auto space-y-6">
-
         {/* Order Header */}
         <div className="bg-white rounded-xl shadow p-6">
           <h1 className="text-2xl font-bold">
-            Order <span className="text-blue-600">#{order._id}</span>
+            Order{" "}
+            <span className="text-blue-600">
+              #{order._id}
+            </span>
           </h1>
 
           <div className="mt-3 flex flex-wrap gap-4">
@@ -49,14 +73,18 @@ const Order = () => {
                   : "bg-yellow-100 text-yellow-700"
               }`}
             >
-              {order.isDelivered ? "Delivered" : "Pending Delivery"}
+              {order.isDelivered
+                ? "Delivered"
+                : "Pending Delivery"}
             </span>
           </div>
         </div>
 
         {/* Shipping */}
         <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-xl font-semibold mb-2">🚚 Shipping Address</h2>
+          <h2 className="text-xl font-semibold mb-2">
+            🚚 Shipping Address
+          </h2>
           <p className="text-gray-700">
             {order.shippingAddress.address},{" "}
             {order.shippingAddress.city},{" "}
@@ -66,7 +94,9 @@ const Order = () => {
 
         {/* Order Items */}
         <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">🛒 Order Items</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            🛒 Order Items
+          </h2>
 
           <div className="space-y-4">
             {order.orderItems.map((item) => (
@@ -81,7 +111,9 @@ const Order = () => {
                 />
 
                 <div className="flex-1">
-                  <p className="font-medium">{item.productName}</p>
+                  <p className="font-medium">
+                    {item.productName}
+                  </p>
                   <p className="text-sm text-gray-500">
                     Qty: {item.qty}
                   </p>
@@ -97,7 +129,9 @@ const Order = () => {
 
         {/* Order Summary */}
         <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-xl font-semibold mb-3">💰 Order Summary</h2>
+          <h2 className="text-xl font-semibold mb-3">
+            💰 Order Summary
+          </h2>
           <div className="flex justify-between text-lg font-bold">
             <span>Total Amount</span>
             <span>₹{order.totalPrice}</span>

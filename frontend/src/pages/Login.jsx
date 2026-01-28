@@ -2,20 +2,19 @@ import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
+import { useAlert } from "../context/AlertContext";
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const { showAlert } = useAlert();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
@@ -27,10 +26,13 @@ const Login = () => {
       // 🔥 save user in context + localStorage
       login(data);
 
+      showAlert("Login successful", "success");
+
       navigate("/");
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Invalid email or password"
+      showAlert(
+        err.response?.data?.message || "Invalid email or password",
+        "error"
       );
     } finally {
       setLoading(false);
@@ -43,12 +45,6 @@ const Login = () => {
         <h1 className="text-2xl md:text-3xl font-bold text-center">
           Login
         </h1>
-
-        {error && (
-          <p className="text-red-600 bg-red-100 p-2 rounded text-center">
-            {error}
-          </p>
-        )}
 
         <form onSubmit={submitHandler} className="space-y-5">
           <div>
@@ -84,7 +80,7 @@ const Login = () => {
             disabled={loading}
             className={`w-full py-2.5 rounded-xl font-semibold text-white ${
               loading
-                ? "bg-gray-400"
+                ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"
             }`}
           >

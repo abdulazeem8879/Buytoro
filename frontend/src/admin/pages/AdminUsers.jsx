@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/api";
+import { useAlert } from "../../context/AlertContext";
 
 const AdminUsers = () => {
+  const { showAlert } = useAlert();
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -19,17 +21,20 @@ const AdminUsers = () => {
 
         setUsers(normalUsers);
       } catch (err) {
-        setError("Failed to load users");
+        showAlert(
+          err.response?.data?.message ||
+            "Failed to load users",
+          "error"
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchUsers();
-  }, []);
+  }, [showAlert]);
 
   if (loading) return <p>Loading users...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
     <div>
@@ -44,6 +49,7 @@ const AdminUsers = () => {
             <th>Joined</th>
           </tr>
         </thead>
+
         <tbody>
           {users.map((user) => (
             <tr key={user._id}>
@@ -52,7 +58,9 @@ const AdminUsers = () => {
               <td align="center">No</td>
               <td>
                 {user.createdAt
-                  ? new Date(user.createdAt).toLocaleDateString()
+                  ? new Date(
+                      user.createdAt
+                    ).toLocaleDateString()
                   : "—"}
               </td>
             </tr>

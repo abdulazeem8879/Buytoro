@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "../../context/AlertContext";
 
 const DEFAULT_AVATAR =
   "https://cdn-icons-png.flaticon.com/512/847/847969.png";
@@ -9,6 +10,7 @@ const DEFAULT_AVATAR =
 const EditProfile = () => {
   const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   const [name, setName] = useState(user?.name || "");
   const [profileImage, setProfileImage] = useState(null);
@@ -17,7 +19,6 @@ const EditProfile = () => {
   );
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -30,7 +31,6 @@ const EditProfile = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
       const formData = new FormData();
@@ -47,9 +47,15 @@ const EditProfile = () => {
       // update auth context
       setUser(data);
 
+      showAlert("Profile updated successfully", "success");
+
       navigate("/profile");
     } catch (err) {
-      setError("Failed to update profile");
+      showAlert(
+        err.response?.data?.message ||
+          "Failed to update profile",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -57,13 +63,9 @@ const EditProfile = () => {
 
   return (
     <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
-
-      {error && (
-        <p className="mb-4 text-red-600 bg-red-100 p-2 rounded">
-          {error}
-        </p>
-      )}
+      <h1 className="text-2xl font-bold mb-6">
+        Edit Profile
+      </h1>
 
       <form
         onSubmit={submitHandler}
@@ -102,7 +104,7 @@ const EditProfile = () => {
           disabled={loading}
           className={`w-full py-2 text-white rounded ${
             loading
-              ? "bg-gray-400"
+              ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-600 hover:bg-blue-700"
           }`}
         >

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Save, Image, Video } from "lucide-react";
 import api from "../../services/api";
+import { useAlert } from "../../context/AlertContext";
 
 const inputClass =
   "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500";
@@ -13,6 +14,7 @@ const selectClass =
 const AdminEditProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   // BASIC
   const [productName, setProductName] = useState("");
@@ -47,7 +49,6 @@ const AdminEditProduct = () => {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -77,20 +78,23 @@ const AdminEditProduct = () => {
         setReturnPolicy(data.returnPolicy || "");
 
         setExistingImages(data.images || []);
-      } catch {
-        setError("Failed to load product");
+      } catch (err) {
+        showAlert(
+          err.response?.data?.message ||
+            "Failed to load product",
+          "error"
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchProduct();
-  }, [id]);
+  }, [id, showAlert]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setError("");
 
     try {
       const formData = new FormData();
@@ -117,13 +121,23 @@ const AdminEditProduct = () => {
       formData.append("deliveryTime", deliveryTime);
       formData.append("returnPolicy", returnPolicy);
 
-      newImages.forEach((img) => formData.append("images", img));
-      if (video) formData.append("productVideo", video);
+      newImages.forEach((img) =>
+        formData.append("images", img)
+      );
+      if (video)
+        formData.append("productVideo", video);
 
       await api.put(`/products/${id}`, formData);
+
+      showAlert("Product updated successfully", "success");
+
       navigate("/admin/products");
-    } catch {
-      setError("Failed to update product");
+    } catch (err) {
+      showAlert(
+        err.response?.data?.message ||
+          "Failed to update product",
+        "error"
+      );
     } finally {
       setSaving(false);
     }
@@ -134,15 +148,14 @@ const AdminEditProduct = () => {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="bg-white rounded-xl shadow-lg p-6">
-        <h1 className="text-2xl font-bold mb-6">Edit Product</h1>
+        <h1 className="text-2xl font-bold mb-6">
+          Edit Product
+        </h1>
 
-        {error && (
-          <p className="mb-4 text-red-600 bg-red-50 px-3 py-2 rounded">
-            {error}
-          </p>
-        )}
-
-        <form onSubmit={submitHandler} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form
+          onSubmit={submitHandler}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
           <input className={inputClass} value={productName} onChange={(e)=>setProductName(e.target.value)} placeholder="Product Name" required />
           <input className={inputClass} value={brandName} onChange={(e)=>setBrandName(e.target.value)} placeholder="Brand Name" required />
           <input className={inputClass} value={category} onChange={(e)=>setCategory(e.target.value)} placeholder="Category" required />

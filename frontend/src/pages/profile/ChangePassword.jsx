@@ -2,27 +2,26 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "../../context/AlertContext";
 
 const ChangePassword = () => {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    setError("");
-    setSuccess("");
-
     if (newPassword !== confirmPassword) {
-      setError("New password and confirm password do not match");
+      showAlert(
+        "New password and confirm password do not match",
+        "error"
+      );
       return;
     }
 
@@ -34,7 +33,10 @@ const ChangePassword = () => {
         newPassword,
       });
 
-      setSuccess("Password changed successfully. Please login again.");
+      showAlert(
+        "Password changed successfully. Please login again.",
+        "success"
+      );
 
       // 🔐 Security best practice: logout after password change
       setTimeout(() => {
@@ -42,8 +44,10 @@ const ChangePassword = () => {
         navigate("/login");
       }, 1500);
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Failed to change password"
+      showAlert(
+        err.response?.data?.message ||
+          "Failed to change password",
+        "error"
       );
     } finally {
       setLoading(false);
@@ -52,19 +56,9 @@ const ChangePassword = () => {
 
   return (
     <div className="max-w-md mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Change Password</h1>
-
-      {error && (
-        <p className="mb-4 text-red-600 bg-red-100 p-2 rounded">
-          {error}
-        </p>
-      )}
-
-      {success && (
-        <p className="mb-4 text-green-600 bg-green-100 p-2 rounded">
-          {success}
-        </p>
-      )}
+      <h1 className="text-2xl font-bold mb-6">
+        Change Password
+      </h1>
 
       <form
         onSubmit={submitHandler}
@@ -77,7 +71,9 @@ const ChangePassword = () => {
           <input
             type="password"
             value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
+            onChange={(e) =>
+              setOldPassword(e.target.value)
+            }
             required
             className="w-full border rounded px-3 py-2"
           />
@@ -90,7 +86,9 @@ const ChangePassword = () => {
           <input
             type="password"
             value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            onChange={(e) =>
+              setNewPassword(e.target.value)
+            }
             required
             className="w-full border rounded px-3 py-2"
           />
@@ -103,7 +101,9 @@ const ChangePassword = () => {
           <input
             type="password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={(e) =>
+              setConfirmPassword(e.target.value)
+            }
             required
             className="w-full border rounded px-3 py-2"
           />
@@ -113,7 +113,7 @@ const ChangePassword = () => {
           disabled={loading}
           className={`w-full py-2 text-white rounded ${
             loading
-              ? "bg-gray-400"
+              ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-600 hover:bg-blue-700"
           }`}
         >
