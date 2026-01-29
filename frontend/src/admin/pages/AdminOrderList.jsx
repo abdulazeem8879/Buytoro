@@ -15,7 +15,7 @@ const AdminOrderList = () => {
   const [paymentFilter, setPaymentFilter] = useState("all");
   const [deliveryFilter, setDeliveryFilter] = useState("all");
 
-  // fetch all orders (ADMIN)
+  // fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -23,175 +23,172 @@ const AdminOrderList = () => {
         setOrders(data);
         setFilteredOrders(data);
       } catch (err) {
-        showAlert(
-          err.response?.data?.message || "Failed to load orders",
-          "error"
-        );
+        showAlert("Failed to load orders", "error");
       } finally {
         setLoading(false);
       }
     };
-
     fetchOrders();
   }, [showAlert]);
 
-  // 🔥 COMBINED FILTER LOGIC
+  // filters
   useEffect(() => {
     let result = [...orders];
 
-    // 🔍 search filter
     if (search) {
-      const keyword = search.toLowerCase();
-
-      result = result.filter((order) => {
-        const orderId = order._id?.toLowerCase();
-        const userName = order.user?.name?.toLowerCase();
-        const email = order.user?.email?.toLowerCase();
-        const date = order.createdAt?.substring(0, 10);
-
-        return (
-          orderId?.includes(keyword) ||
-          userName?.includes(keyword) ||
-          email?.includes(keyword) ||
-          date?.includes(keyword)
-        );
-      });
-    }
-
-    // 💰 payment filter
-    if (paymentFilter !== "all") {
-      result = result.filter((order) =>
-        paymentFilter === "paid"
-          ? order.isPaid
-          : !order.isPaid
+      const k = search.toLowerCase();
+      result = result.filter((o) =>
+        o._id.toLowerCase().includes(k) ||
+        o.user?.name?.toLowerCase().includes(k) ||
+        o.user?.email?.toLowerCase().includes(k) ||
+        o.createdAt?.substring(0, 10).includes(k)
       );
     }
 
-    // 🚚 delivery filter
+    if (paymentFilter !== "all") {
+      result = result.filter((o) =>
+        paymentFilter === "paid" ? o.isPaid : !o.isPaid
+      );
+    }
+
     if (deliveryFilter !== "all") {
-      result = result.filter((order) =>
+      result = result.filter((o) =>
         deliveryFilter === "delivered"
-          ? order.isDelivered
-          : !order.isDelivered
+          ? o.isDelivered
+          : !o.isDelivered
       );
     }
 
     setFilteredOrders(result);
   }, [search, paymentFilter, deliveryFilter, orders]);
 
-  if (loading) {
-    return <h2 className="p-6">Loading orders...</h2>;
-  }
+  // ❌ DELETE ORDER
+  const deleteOrder = async (id) => {
+    if (!window.confirm("Delete this order permanently?")) return;
+
+    try {
+      await api.delete(`/orders/${id}`);
+      setOrders((prev) => prev.filter((o) => o._id !== id));
+      showAlert("Order deleted", "success");
+    } catch {
+      showAlert("Delete failed", "error");
+    }
+  };
+
+  // 🚫 CANCEL ORDER
+  const cancelOrder = async (id) => {
+    if (!window.confirm("Cancel this order?")) return;
+
+    try {
+      const { data } = await api.put(`/orders/${id}/cancel/admin`);
+
+      setOrders((prev) =>
+        prev.map((o) => (o._id === id ? data : o))
+      );
+
+      showAlert("Order cancelled", "success");
+    } catch {
+      showAlert("Cancel failed", "error");
+    }
+  };
+
+  if (loading) return <p className="p-6">Loading orders...</p>;
 
   return (
     <div className="p-6">
-      {/* HEADER */}
       <h1 className="text-2xl font-bold mb-4">Orders</h1>
 
       {/* FILTER BAR */}
-      <div className="flex flex-wrap gap-4 items-center mb-6">
-        {/* SEARCH */}
+      <div className="flex flex-wrap gap-4 mb-6">
         <input
-          type="text"
-          placeholder="Search by order, user, email, date"
+          placeholder="Search order / user / email / date"
+          className="border px-3 py-2 rounded text-sm"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border px-3 py-2 rounded-md text-sm w-64 focus:ring-2 focus:ring-blue-500"
         />
 
-        {/* PAYMENT FILTER */}
         <select
           value={paymentFilter}
           onChange={(e) => setPaymentFilter(e.target.value)}
-          className="border px-3 py-2 rounded-md text-sm"
+          className="border px-3 py-2 rounded text-sm"
         >
           <option value="all">All Payments</option>
           <option value="paid">Paid</option>
           <option value="unpaid">Unpaid</option>
         </select>
 
-        {/* DELIVERY FILTER */}
         <select
           value={deliveryFilter}
           onChange={(e) => setDeliveryFilter(e.target.value)}
-          className="border px-3 py-2 rounded-md text-sm"
+          className="border px-3 py-2 rounded text-sm"
         >
-          <option value="all">All Deliveries</option>
+          <option value="all">All Delivery</option>
           <option value="delivered">Delivered</option>
           <option value="pending">Pending</option>
         </select>
       </div>
 
       {/* TABLE */}
-      <div className="overflow-x-auto bg-white shadow rounded-lg">
+      <div className="overflow-x-auto bg-white shadow rounded">
         <table className="w-full border-collapse">
           <thead className="bg-gray-100">
             <tr>
-              <th className="border px-4 py-2 text-left">ORDER ID</th>
-              <th className="border px-4 py-2 text-left">USER</th>
-              <th className="border px-4 py-2 text-left">EMAIL</th>
-              <th className="border px-4 py-2 text-left">TOTAL</th>
-              <th className="border px-4 py-2 text-center">PAID</th>
-              <th className="border px-4 py-2 text-center">DELIVERED</th>
-              <th className="border px-4 py-2 text-center">DATE</th>
-              <th className="border px-4 py-2 text-center">ACTION</th>
+              <th className="border px-3 py-2">ORDER</th>
+              <th className="border px-3 py-2">USER</th>
+              <th className="border px-3 py-2">TOTAL</th>
+              <th className="border px-3 py-2">STATUS</th>
+              <th className="border px-3 py-2">ACTION</th>
             </tr>
           </thead>
 
           <tbody>
-            {filteredOrders.map((order) => (
-              <tr key={order._id} className="hover:bg-gray-50">
-                <td className="border px-4 py-2 text-sm">
-                  {order._id}
+            {filteredOrders.map((o) => (
+              <tr key={o._id} className="hover:bg-gray-50">
+                <td className="border px-3 py-2 text-sm">{o._id}</td>
+                <td className="border px-3 py-2">
+                  {o.user?.name}
+                  <br />
+                  <span className="text-xs text-gray-500">
+                    {o.user?.email}
+                  </span>
                 </td>
+                <td className="border px-3 py-2">₹{o.totalPrice}</td>
 
-                <td className="border px-4 py-2">
-                  {order.user?.name}
-                </td>
-
-                <td className="border px-4 py-2">
-                  {order.user?.email}
-                </td>
-
-                <td className="border px-4 py-2">
-                  ₹{order.totalPrice}
-                </td>
-
-                <td className="border px-4 py-2 text-center">
-                  {order.isPaid ? (
-                    <span className="text-green-600 font-semibold">
-                      Paid
+                <td className="border px-3 py-2 text-center">
+                  {o.isCancelled ? (
+                    <span className="text-orange-600 font-semibold">
+                      Cancelled
                     </span>
+                  ) : o.isDelivered ? (
+                    <span className="text-green-600">Delivered</span>
                   ) : (
-                    <span className="text-red-500 font-semibold">
-                      Unpaid
-                    </span>
+                    <span className="text-yellow-600">Pending</span>
                   )}
                 </td>
 
-                <td className="border px-4 py-2 text-center">
-                  {order.isDelivered ? (
-                    <span className="text-green-600 font-semibold">
-                      Delivered
-                    </span>
-                  ) : (
-                    <span className="text-yellow-600 font-semibold">
-                      Pending
-                    </span>
-                  )}
-                </td>
-
-                <td className="border px-4 py-2 text-center">
-                  {order.createdAt?.substring(0, 10)}
-                </td>
-
-                <td className="border px-4 py-2 text-center">
+                <td className="border px-3 py-2 text-center space-x-2">
                   <Link
-                    to={`/order/${order._id}`}
-                    className="text-blue-600 hover:underline font-medium"
+                    to={`/order/${o._id}`}
+                    className="text-blue-600 underline"
                   >
                     View
                   </Link>
+
+                  {!o.isDelivered && !o.isCancelled && (
+                    <button
+                      onClick={() => cancelOrder(o._id)}
+                      className="text-orange-600 font-medium"
+                    >
+                      Cancel
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => deleteOrder(o._id)}
+                    className="text-red-600 font-medium"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
@@ -200,7 +197,7 @@ const AdminOrderList = () => {
 
         {filteredOrders.length === 0 && (
           <p className="p-4 text-center text-gray-500">
-            No matching orders found
+            No orders found
           </p>
         )}
       </div>

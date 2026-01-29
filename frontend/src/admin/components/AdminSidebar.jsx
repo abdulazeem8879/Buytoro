@@ -34,7 +34,13 @@ const AdminSidebar = () => {
   ];
 
   return (
-    <aside className="w-64 min-h-screen bg-gray-900 text-white p-6">
+    <aside
+      className="w-64 min-h-screen
+        bg-white dark:bg-gray-900
+        text-gray-800 dark:text-gray-100
+        p-6 border-r border-gray-200 dark:border-gray-800
+        transition-colors duration-300"
+    >
       {/* Logo / Title */}
       <h2 className="text-2xl font-bold mb-8 text-center">
         🛠 Admin Panel
@@ -42,21 +48,25 @@ const AdminSidebar = () => {
 
       {/* Navigation */}
       <nav className="space-y-2">
-        {menu.map((item) => (
-          <Link
-            key={item.name}
-            to={item.path}
-            className={`flex items-center gap-3 px-4 py-2 rounded-lg transition
-              ${
-                location.pathname === item.path
-                  ? "bg-blue-600"
-                  : "hover:bg-gray-800"
-              }`}
-          >
-            {item.icon}
-            <span>{item.name}</span>
-          </Link>
-        ))}
+        {menu.map((item) => {
+          const isActive = location.pathname === item.path;
+
+          return (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition
+                ${
+                  isActive
+                    ? "bg-blue-600 text-white"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+            >
+              {item.icon}
+              <span>{item.name}</span>
+            </Link>
+          );
+        })}
       </nav>
     </aside>
   );

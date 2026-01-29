@@ -67,6 +67,16 @@ const orderSchema = new mongoose.Schema(
     },
 
     deliveredAt: Date,
+
+    // ✅ CANCEL ORDER SUPPORT
+    isCancelled: {
+      type: Boolean,
+      default: false,
+    },
+
+    cancelledAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

@@ -47,20 +47,67 @@ const Home = () => {
   return (
     <div className="space-y-12">
       {/* ===== HERO ===== */}
-      <section className="bg-gradient-to-r from-black to-gray-800 text-white p-14 text-center rounded-xl">
-        <h1 className="text-3xl font-bold">
-          Premium Watches for Every Style
-        </h1>
-        <p className="mt-3 text-gray-300">
-          Explore the best collection of branded watches
-        </p>
+    {/* ===== HERO ===== */}
+<section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white">
+  {/* Glow */}
+  <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-white/10 blur-3xl"></div>
+  <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-white/5 blur-3xl"></div>
+
+  <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center px-8 py-16">
+    {/* LEFT CONTENT */}
+    <div>
+      <span className="inline-block mb-4 px-4 py-1 text-sm font-semibold rounded-full bg-white/10 backdrop-blur">
+        ⌚ Premium Collection 2026
+      </span>
+
+      <h1 className="text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight">
+        Elevate Your Time <br />
+        <span className="bg-gradient-to-r from-gray-200 to-gray-400 bg-clip-text text-transparent">
+          With Luxury Watches
+        </span>
+      </h1>
+
+      <p className="mt-5 max-w-xl text-gray-300 text-lg">
+        Discover hand-picked premium watches crafted for elegance,
+        performance, and timeless style.
+      </p>
+
+      <div className="mt-8 flex flex-wrap gap-4">
         <Link
           to="/"
-          className="inline-block mt-6 px-6 py-2 bg-white text-black font-bold rounded-md hover:bg-gray-200 transition"
+          className="px-7 py-3 bg-white text-black font-bold rounded-lg hover:bg-gray-200 transition"
         >
           Shop Now
         </Link>
-      </section>
+
+        <Link
+          to="/products"
+          className="px-7 py-3 border border-white/30 rounded-lg font-semibold hover:bg-white/10 transition"
+        >
+          Explore Collection
+        </Link>
+      </div>
+    </div>
+
+    {/* RIGHT IMAGE / CARD */}
+    <div className="relative flex justify-center">
+      <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl hover:scale-105 transition duration-500">
+        <img
+          src="https://images.unsplash.com/photo-1523275335684-37898b6baf30"
+          alt="Luxury Watch"
+          className="w-[260px] md:w-[300px] rounded-xl"
+        />
+        <div className="mt-4 text-center">
+          <p className="font-semibold">Luxury Watch Series</p>
+          <p className="text-sm text-gray-300">
+            Starting from ₹4,999
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {/* ===== PRODUCTS ===== */}
       <section>

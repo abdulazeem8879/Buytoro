@@ -1,6 +1,9 @@
 import express from "express";
 import {
+  cancelOrder,
+  cancelOrderByAdmin,
   createOrder,
+  deleteOrderByAdmin,
   getAllOrders,
   getMyOrders,
   getOrderById,
@@ -11,15 +14,36 @@ import { admin, protect } from "../middlewares/authMiddleware.js";
 
 const orderRouter = express.Router();
 
-// user order routes
+/* ================= USER ROUTES ================= */
+
+// create order
 orderRouter.post("/", protect, createOrder);
+
+// get my orders
 orderRouter.get("/myorders", protect, getMyOrders);
+
+// get order by id
 orderRouter.get("/:id", protect, getOrderById);
-orderRouter.put('/:id/pay', protect, updateOrderToPaid);
 
-// Admin order routes
+// pay order
+orderRouter.put("/:id/pay", protect, updateOrderToPaid);
 
+// ✅ USER CANCEL ORDER
+orderRouter.put("/:id/cancel", protect, cancelOrder);
+
+
+/* ================= ADMIN ROUTES ================= */
+
+// get all orders
 orderRouter.get("/", protect, admin, getAllOrders);
-orderRouter.put('/:id/deliver', protect, admin, updateOrderToDelivered);
+
+// mark delivered
+orderRouter.put("/:id/deliver", protect, admin, updateOrderToDelivered);
+
+// ✅ ADMIN CANCEL (DIFFERENT PATH)
+orderRouter.put("/:id/cancel/admin", protect, admin, cancelOrderByAdmin);
+
+// delete order
+orderRouter.delete("/:id", protect, admin, deleteOrderByAdmin);
 
 export default orderRouter;

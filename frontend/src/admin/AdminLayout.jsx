@@ -3,14 +3,16 @@ import AdminSidebar from "./components/AdminSidebar";
 
 const AdminLayout = () => {
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div className="min-h-screen flex
+      bg-gray-100 dark:bg-gray-900
+      text-gray-900 dark:text-gray-100
+      transition-colors duration-300"
+    >
       {/* admin sidebar */}
-
       <AdminSidebar />
 
       {/* right side page content */}
-
-      <div style={{ flex: 1, padding: "20px" }}>
+      <div className="flex-1 p-6">
         <Outlet />
       </div>
     </div>

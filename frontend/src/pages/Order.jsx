@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { getOrderById } from "../services/orderService";
 import { useAlert } from "../context/AlertContext";
+import { AuthContext } from "../context/AuthContext";
 
 const Order = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { showAlert } = useAlert();
+  const { user } = useContext(AuthContext);
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,8 +21,7 @@ const Order = () => {
         setOrder(data);
       } catch (error) {
         showAlert(
-          error.response?.data?.message ||
-            "Failed to fetch order",
+          error.response?.data?.message || "Failed to fetch order",
           "error"
         );
         navigate("/");
@@ -35,9 +36,7 @@ const Order = () => {
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <h2 className="text-xl font-semibold">
-          Loading order...
-        </h2>
+        <h2 className="text-xl font-semibold">Loading order...</h2>
       </div>
     );
 
@@ -46,13 +45,30 @@ const Order = () => {
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
       <div className="max-w-5xl mx-auto space-y-6">
+
+        {/* 🔙 BACK BUTTON (ROLE BASED) */}
+        <div>
+          {user?.isAdmin ? (
+            <Link
+              to="/admin/orders"
+              className="inline-block mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+            >
+              ← Back to Admin Orders
+            </Link>
+          ) : (
+            <Link
+              to="/my-orders"
+              className="inline-block mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+            >
+              ← Back to My Orders
+            </Link>
+          )}
+        </div>
+
         {/* Order Header */}
         <div className="bg-white rounded-xl shadow p-6">
           <h1 className="text-2xl font-bold">
-            Order{" "}
-            <span className="text-blue-600">
-              #{order._id}
-            </span>
+            Order <span className="text-blue-600">#{order._id}</span>
           </h1>
 
           <div className="mt-3 flex flex-wrap gap-4">
@@ -68,12 +84,16 @@ const Order = () => {
 
             <span
               className={`px-3 py-1 rounded-full text-sm font-medium ${
-                order.isDelivered
+                order.isCancelled
+                  ? "bg-gray-200 text-gray-700"
+                  : order.isDelivered
                   ? "bg-green-100 text-green-700"
                   : "bg-yellow-100 text-yellow-700"
               }`}
             >
-              {order.isDelivered
+              {order.isCancelled
+                ? "Cancelled"
+                : order.isDelivered
                 ? "Delivered"
                 : "Pending Delivery"}
             </span>
@@ -111,9 +131,7 @@ const Order = () => {
                 />
 
                 <div className="flex-1">
-                  <p className="font-medium">
-                    {item.productName}
-                  </p>
+                  <p className="font-medium">{item.productName}</p>
                   <p className="text-sm text-gray-500">
                     Qty: {item.qty}
                   </p>

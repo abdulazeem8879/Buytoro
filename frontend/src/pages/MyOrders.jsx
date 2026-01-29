@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 import { useAlert } from "../context/AlertContext";
+
 const MyOrders = () => {
   const { showAlert } = useAlert();
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cancelLoading, setCancelLoading] = useState(null);
 
   useEffect(() => {
     const fetchMyOrders = async () => {
@@ -15,8 +17,7 @@ const MyOrders = () => {
         setOrders(data);
       } catch (err) {
         showAlert(
-          err.response?.data?.message ||
-            "Failed to load your orders",
+          err.response?.data?.message || "Failed to load your orders",
           "error"
         );
       } finally {
@@ -26,6 +27,33 @@ const MyOrders = () => {
 
     fetchMyOrders();
   }, [showAlert]);
+
+  // ❌ CANCEL ORDER
+  const cancelOrderHandler = async (orderId) => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) return;
+
+    try {
+      setCancelLoading(orderId);
+
+      const { data } = await api.put(`/orders/${orderId}/cancel`);
+
+      // update UI without reload
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === data._id ? data : order
+        )
+      );
+
+      showAlert("Order cancelled successfully", "success");
+    } catch (err) {
+      showAlert(
+        err.response?.data?.message || "Failed to cancel order",
+        "error"
+      );
+    } finally {
+      setCancelLoading(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -37,9 +65,7 @@ const MyOrders = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">
-        My Orders
-      </h1>
+      <h1 className="text-2xl font-bold mb-6">My Orders</h1>
 
       {orders.length === 0 ? (
         <div className="bg-white p-6 rounded-lg shadow text-center">
@@ -59,43 +85,25 @@ const MyOrders = () => {
           <table className="w-full border-collapse">
             <thead className="bg-gray-100">
               <tr>
-                <th className="border px-4 py-3 text-left">
-                  ORDER ID
-                </th>
-                <th className="border px-4 py-3 text-left">
-                  DATE
-                </th>
-                <th className="border px-4 py-3 text-center">
-                  TOTAL
-                </th>
-                <th className="border px-4 py-3 text-center">
-                  PAID
-                </th>
-                <th className="border px-4 py-3 text-center">
-                  DELIVERED
-                </th>
-                <th className="border px-4 py-3 text-center">
-                  ACTION
-                </th>
+                <th className="border px-4 py-3 text-left">ORDER ID</th>
+                <th className="border px-4 py-3 text-left">DATE</th>
+                <th className="border px-4 py-3 text-center">TOTAL</th>
+                <th className="border px-4 py-3 text-center">PAID</th>
+                <th className="border px-4 py-3 text-center">DELIVERED</th>
+                <th className="border px-4 py-3 text-center">STATUS</th>
+                <th className="border px-4 py-3 text-center">ACTION</th>
               </tr>
             </thead>
 
             <tbody>
               {orders.map((order) => (
-                <tr
-                  key={order._id}
-                  className="hover:bg-gray-50"
-                >
+                <tr key={order._id} className="hover:bg-gray-50">
                   <td className="border px-4 py-3 text-sm">
                     {order._id}
                   </td>
 
                   <td className="border px-4 py-3">
-                    {order.createdAt
-                      ? new Date(
-                          order.createdAt
-                        ).toLocaleDateString()
-                      : "—"}
+                    {new Date(order.createdAt).toLocaleDateString()}
                   </td>
 
                   <td className="border px-4 py-3 text-center font-medium">
@@ -127,12 +135,40 @@ const MyOrders = () => {
                   </td>
 
                   <td className="border px-4 py-3 text-center">
+                    {order.isCancelled ? (
+                      <span className="px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700 font-semibold">
+                        Cancelled
+                      </span>
+                    ) : (
+                      <span className="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-700 font-semibold">
+                        Active
+                      </span>
+                    )}
+                  </td>
+
+                  <td className="border px-4 py-3 text-center space-x-3">
                     <Link
                       to={`/order/${order._id}`}
                       className="text-blue-600 hover:underline font-medium"
                     >
                       View
                     </Link>
+
+                    {!order.isPaid &&
+                      !order.isDelivered &&
+                      !order.isCancelled && (
+                        <button
+                          onClick={() =>
+                            cancelOrderHandler(order._id)
+                          }
+                          disabled={cancelLoading === order._id}
+                          className="text-red-600 font-medium hover:underline"
+                        >
+                          {cancelLoading === order._id
+                            ? "Cancelling..."
+                            : "Cancel"}
+                        </button>
+                      )}
                   </td>
                 </tr>
               ))}
