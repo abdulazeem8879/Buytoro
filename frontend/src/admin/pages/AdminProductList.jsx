@@ -19,12 +19,9 @@ const AdminProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [openDeleteDialog, setOpenDeleteDialog] =
-    useState(false);
-  const [selectedProductId, setSelectedProductId] =
-    useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
-  // Load products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -32,8 +29,7 @@ const AdminProductList = () => {
         setProducts(data);
       } catch (err) {
         showAlert(
-          err.response?.data?.message ||
-            "Failed to load products",
+          err.response?.data?.message || "Failed to load products",
           "error"
         );
       } finally {
@@ -44,26 +40,17 @@ const AdminProductList = () => {
     fetchProducts();
   }, [showAlert]);
 
-  // Delete product
   const deleteHandler = async () => {
     try {
-      await api.delete(
-        `/products/${selectedProductId}`
-      );
+      await api.delete(`/products/${selectedProductId}`);
 
       setProducts((prev) =>
-        prev.filter(
-          (p) => p._id !== selectedProductId
-        )
+        prev.filter((p) => p._id !== selectedProductId)
       );
 
       showAlert("Product deleted successfully", "success");
     } catch (err) {
-      showAlert(
-        err.response?.data?.message ||
-          "Delete failed",
-        "error"
-      );
+      showAlert(err.response?.data?.message || "Delete failed", "error");
     } finally {
       setOpenDeleteDialog(false);
       setSelectedProductId(null);
@@ -72,45 +59,39 @@ const AdminProductList = () => {
 
   if (loading) {
     return (
-      <h3 className="text-center text-lg font-semibold text-gray-600 mt-10">
+      <p className="p-6 text-center text-gray-500 dark:text-gray-400">
         Loading products...
-      </h3>
+      </p>
     );
   }
 
   return (
     <>
       <div className="p-6">
+        {/* HEADER */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <Package className="w-6 h-6" />
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <Package />
             Products
           </h1>
 
           <Link to="/admin/products/add">
-            <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition">
-              <Plus className="w-4 h-4" />
+            <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+              <Plus size={18} />
               Add Product
             </button>
           </Link>
         </div>
 
-        <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-          <table className="w-full border-collapse">
-            <thead className="bg-gray-100">
+        {/* TABLE */}
+        <div className="overflow-x-auto bg-white dark:bg-gray-900 rounded-xl shadow border dark:border-gray-800">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-100 dark:bg-gray-800">
               <tr>
-                <th className="border px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                  IMAGE
-                </th>
-                <th className="border px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                  PRODUCT NAME
-                </th>
-                <th className="border px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                  PRICE
-                </th>
-                <th className="border px-4 py-3 text-center text-sm font-semibold text-gray-600">
-                  ACTIONS
-                </th>
+                <th className="px-4 py-3 text-left">Image</th>
+                <th className="px-4 py-3 text-left">Product</th>
+                <th className="px-4 py-3 text-left">Price</th>
+                <th className="px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
 
@@ -118,44 +99,42 @@ const AdminProductList = () => {
               {products.map((product) => (
                 <tr
                   key={product._id}
-                  className="hover:bg-gray-50 transition"
+                  className="border-t dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                 >
-                  <td className="border px-4 py-3">
+                  <td className="px-4 py-3">
                     <img
                       src={product.images?.[0]?.url}
                       alt={product.productName}
-                      className="w-14 h-14 object-cover rounded-md"
+                      className="w-14 h-14 object-cover rounded-lg border"
                     />
                   </td>
 
-                  <td className="border px-4 py-3 font-medium text-gray-700">
+                  <td className="px-4 py-3 font-medium">
                     {product.productName}
                   </td>
 
-                  <td className="border px-4 py-3 text-gray-700">
+                  <td className="px-4 py-3 font-semibold">
                     ₹{product.price}
                   </td>
 
-                  <td className="border px-4 py-3">
+                  <td className="px-4 py-3">
                     <div className="flex items-center justify-center gap-4">
                       <Link
                         to={`/admin/products/${product._id}/edit`}
-                        className="flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium"
+                        className="flex items-center gap-1 text-blue-600 hover:underline"
                       >
-                        <Pencil className="w-4 h-4" />
+                        <Pencil size={16} />
                         Edit
                       </Link>
 
                       <button
-                        className="flex items-center gap-1 text-red-600 hover:text-red-700 font-medium"
+                        className="flex items-center gap-1 text-red-600 hover:underline"
                         onClick={() => {
-                          setSelectedProductId(
-                            product._id
-                          );
+                          setSelectedProductId(product._id);
                           setOpenDeleteDialog(true);
                         }}
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 size={16} />
                         Delete
                       </button>
                     </div>
@@ -166,14 +145,14 @@ const AdminProductList = () => {
           </table>
 
           {products.length === 0 && (
-            <p className="p-4 text-center text-gray-500">
+            <p className="p-6 text-center text-gray-500">
               No products found
             </p>
           )}
         </div>
       </div>
 
-      {/* ===== DELETE CONFIRM DIALOG ===== */}
+      {/* DELETE DIALOG */}
       <Dialog
         open={openDeleteDialog}
         onClose={() => setOpenDeleteDialog(false)}
@@ -185,12 +164,9 @@ const AdminProductList = () => {
         </DialogContent>
 
         <DialogActions>
-          <Button
-            onClick={() => setOpenDeleteDialog(false)}
-          >
+          <Button onClick={() => setOpenDeleteDialog(false)}>
             Cancel
           </Button>
-
           <Button
             color="error"
             variant="contained"

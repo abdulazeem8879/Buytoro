@@ -2,6 +2,11 @@ import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useAlert } from "../context/AlertContext";
+import {
+  Trash2,
+  ShoppingBag,
+  AlertTriangle,
+} from "lucide-react";
 
 // MUI
 import {
@@ -26,7 +31,6 @@ const Cart = () => {
   const [openClearDialog, setOpenClearDialog] =
     useState(false);
 
-  // ✅ price vs discountPrice handling
   const totalPrice = cartItems.reduce(
     (acc, item) =>
       acc +
@@ -37,24 +41,28 @@ const Cart = () => {
     0
   );
 
-  // 🚫 Empty cart UI
+  // 🛒 EMPTY CART
   if (cartItems.length === 0) {
     return (
-      <div className="text-center mt-16">
-        <h2 className="text-2xl font-semibold mb-4">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
+        <ShoppingBag className="w-16 h-16 mb-4 text-gray-400" />
+        <h2 className="text-2xl font-bold mb-2">
           Your cart is empty
         </h2>
+        <p className="text-gray-500 mb-6">
+          Add some products to get started
+        </p>
+
         <Link
           to="/"
-          className="text-blue-600 hover:underline"
+          className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
         >
-          Continue shopping →
+          Continue Shopping
         </Link>
       </div>
     );
   }
 
-  // 👉 Checkout guard
   const proceedToCheckout = () => {
     if (cartItems.length === 0) {
       showAlert("Your cart is empty", "warning");
@@ -65,40 +73,52 @@ const Cart = () => {
 
   return (
     <>
-      <div className="max-w-5xl mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-8">
+        <h1 className="text-3xl font-bold mb-8">
           Shopping Cart
         </h1>
 
-        <div className="space-y-6">
+        {/* CART ITEMS */}
+        <div className="space-y-5">
           {cartItems.map((item) => (
             <div
               key={item._id}
-              className="flex items-center gap-4 p-4 border rounded-lg shadow-sm"
+              className="flex flex-col sm:flex-row gap-4
+                p-4 rounded-xl border
+                bg-white dark:bg-gray-800
+                shadow-sm hover:shadow-md transition"
             >
+              {/* IMAGE */}
               <img
                 src={item.images?.[0]?.url}
                 alt={item.productName}
-                className="w-20 h-20 object-cover rounded"
+                className="w-full sm:w-28 h-40 sm:h-28 object-cover rounded-lg"
               />
 
+              {/* INFO */}
               <div className="flex-1">
                 <Link
                   to={`/product/${item._id}`}
-                  className="font-medium text-lg hover:underline"
+                  className="text-lg font-semibold hover:underline"
                 >
                   {item.productName}
                 </Link>
 
-                <p className="text-gray-700 mt-1">
+                <p className="text-gray-600 dark:text-gray-400 mt-1">
                   ₹{" "}
                   {item.discountPrice > 0
                     ? item.discountPrice
                     : item.price}
                 </p>
+
+                {item.discountPrice > 0 && (
+                  <p className="text-sm text-green-600 font-medium">
+                    Discount applied
+                  </p>
+                )}
               </div>
 
-              {/* Quantity */}
+              {/* QTY */}
               {item.stockStatus === "in_stock" && (
                 <select
                   value={item.qty}
@@ -108,7 +128,8 @@ const Cart = () => {
                       Number(e.target.value)
                     )
                   }
-                  className="border rounded px-2 py-1"
+                  className="h-10 border rounded-lg px-3
+                    bg-transparent focus:ring-2 focus:ring-black"
                 >
                   {[
                     ...Array(
@@ -125,48 +146,62 @@ const Cart = () => {
                 </select>
               )}
 
+              {/* REMOVE */}
               <button
                 onClick={() =>
                   removeFromCart(item._id)
                 }
-                className="text-red-600 hover:text-red-800 font-medium"
+                className="flex items-center gap-1
+                  text-red-600 hover:text-red-700
+                  font-medium self-start sm:self-center"
               >
+                <Trash2 size={18} />
                 Remove
               </button>
             </div>
           ))}
         </div>
 
-        {/* Footer */}
-        <div className="flex flex-wrap gap-4 justify-between items-center mt-8 border-t pt-4">
-          <h2 className="text-xl font-semibold">
+        {/* SUMMARY */}
+        <div
+          className="mt-10 flex flex-col sm:flex-row
+            justify-between items-start sm:items-center
+            gap-4 border-t pt-6"
+        >
+          <h2 className="text-xl font-bold">
             Total: ₹ {totalPrice}
           </h2>
 
           <div className="flex gap-3">
             <button
               onClick={() => setOpenClearDialog(true)}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              className="px-4 py-2 border border-red-500
+                text-red-600 rounded-lg
+                hover:bg-red-50 dark:hover:bg-gray-700 transition"
             >
               Clear Cart
             </button>
 
             <button
               onClick={proceedToCheckout}
-              className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
+              className="px-6 py-2 bg-black text-white
+                rounded-lg hover:bg-gray-800 transition"
             >
-              Proceed To Checkout
+              Proceed to Checkout
             </button>
           </div>
         </div>
       </div>
 
-      {/* ===== CLEAR CART CONFIRM DIALOG ===== */}
+      {/* ===== CLEAR CART DIALOG ===== */}
       <Dialog
         open={openClearDialog}
         onClose={() => setOpenClearDialog(false)}
       >
-        <DialogTitle>Clear Cart</DialogTitle>
+        <DialogTitle className="flex items-center gap-2 text-red-600">
+          <AlertTriangle />
+          Clear Cart
+        </DialogTitle>
 
         <DialogContent>
           Are you sure you want to remove all items
@@ -179,7 +214,6 @@ const Cart = () => {
           >
             Cancel
           </Button>
-
           <Button
             color="error"
             variant="contained"

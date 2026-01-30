@@ -35,14 +35,17 @@ const AdminSidebar = () => {
 
   return (
     <aside
-      className="w-64 min-h-screen
+      className="
+        w-64 min-h-screen
         bg-white dark:bg-gray-900
         text-gray-800 dark:text-gray-100
-        p-6 border-r border-gray-200 dark:border-gray-800
-        transition-colors duration-300"
+        p-6
+        border-r border-gray-200 dark:border-gray-800
+        transition-colors duration-300
+      "
     >
       {/* Logo / Title */}
-      <h2 className="text-2xl font-bold mb-8 text-center">
+      <h2 className="text-2xl font-bold mb-10 text-center tracking-wide">
         🛠 Admin Panel
       </h2>
 
@@ -55,15 +58,20 @@ const AdminSidebar = () => {
             <Link
               key={item.name}
               to={item.path}
-              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition
+              className={`
+                flex items-center gap-3 px-4 py-2.5 rounded-lg
+                transition-all duration-200
                 ${
                   isActive
-                    ? "bg-blue-600 text-white"
-                    : "hover:bg-gray-100 dark:hover:bg-gray-800"
-                }`}
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }
+              `}
             >
               {item.icon}
-              <span>{item.name}</span>
+              <span className="font-medium">
+                {item.name}
+              </span>
             </Link>
           );
         })}

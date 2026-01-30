@@ -3,6 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "../../context/AlertContext";
+import { Lock } from "lucide-react";
 
 const ChangePassword = () => {
   const { logout } = useContext(AuthContext);
@@ -38,7 +39,6 @@ const ChangePassword = () => {
         "success"
       );
 
-      // 🔐 Security best practice: logout after password change
       setTimeout(() => {
         logout();
         navigate("/login");
@@ -56,13 +56,16 @@ const ChangePassword = () => {
 
   return (
     <div className="max-w-md mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">
+      {/* HEADER */}
+      <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
+        <Lock />
         Change Password
       </h1>
 
+      {/* FORM */}
       <form
         onSubmit={submitHandler}
-        className="bg-white p-6 rounded-lg shadow space-y-4"
+        className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow border dark:border-gray-800 space-y-4"
       >
         <div>
           <label className="block font-medium mb-1">
@@ -71,11 +74,10 @@ const ChangePassword = () => {
           <input
             type="password"
             value={oldPassword}
-            onChange={(e) =>
-              setOldPassword(e.target.value)
-            }
+            onChange={(e) => setOldPassword(e.target.value)}
             required
-            className="w-full border rounded px-3 py-2"
+            className="w-full border dark:border-gray-700 rounded px-3 py-2
+              bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -86,11 +88,10 @@ const ChangePassword = () => {
           <input
             type="password"
             value={newPassword}
-            onChange={(e) =>
-              setNewPassword(e.target.value)
-            }
+            onChange={(e) => setNewPassword(e.target.value)}
             required
-            className="w-full border rounded px-3 py-2"
+            className="w-full border dark:border-gray-700 rounded px-3 py-2
+              bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -105,13 +106,14 @@ const ChangePassword = () => {
               setConfirmPassword(e.target.value)
             }
             required
-            className="w-full border rounded px-3 py-2"
+            className="w-full border dark:border-gray-700 rounded px-3 py-2
+              bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <button
           disabled={loading}
-          className={`w-full py-2 text-white rounded ${
+          className={`w-full py-2 rounded font-medium text-white transition ${
             loading
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-600 hover:bg-blue-700"

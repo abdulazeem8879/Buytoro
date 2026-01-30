@@ -2,8 +2,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { CartContext } from "../context/CartContext";
-import { assets } from "../assets/assets";
 import AnalogWatch from "../components/AnalogWatch";
+
+// Lucide Icons
+import {
+  Sun,
+  Moon,
+  ShoppingCart,
+  User,
+  LogOut,
+  Shield,
+  Search,
+} from "lucide-react";
 
 // MUI
 import {
@@ -13,12 +23,13 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
+
 import { useTheme } from "../context/ThemeContext";
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
-  const { theme, toggleTheme } = useTheme(); // ✅ GLOBAL THEME
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const [keyword, setKeyword] = useState("");
@@ -40,22 +51,18 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 h-16
-        bg-white dark:bg-black
-        border-b border-gray-200 dark:border-gray-800">
-        <div className="h-full px-8 flex items-center justify-between">
+      <nav className="sticky top-0 z-50 h-16 bg-white dark:bg-black border-b border-slate-200 dark:border-slate-800">
+        <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
 
           {/* LEFT */}
           <div className="flex items-center gap-4">
             <Link to="/" className="flex items-center gap-2">
-              <img
-                src={assets.logo7}
-                alt="BuyToro Logo"
-                className="h-10 w-auto object-contain"
-              />
+              <h1 className="text-2xl font-bold tracking-tight text-black dark:text-white">
+                BuyToro
+              </h1>
             </Link>
 
-            <div className="flex items-center justify-center w-14 h-14">
+            <div className="hidden sm:flex items-center justify-center w-12 h-12">
               <AnalogWatch />
             </div>
           </div>
@@ -63,85 +70,89 @@ const Navbar = () => {
           {/* SEARCH */}
           <form
             onSubmit={submitHandler}
-            className="hidden md:flex items-center gap-2
-              bg-gray-100 dark:bg-gray-900
-              px-2 py-1 rounded-lg
-              border border-gray-300 dark:border-gray-800"
+            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg
+              bg-slate-100 dark:bg-slate-900
+              border border-slate-300 dark:border-slate-700"
           >
+            <Search size={16} className="text-slate-500" />
             <input
               type="text"
               placeholder="Search products..."
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              className="bg-transparent text-black dark:text-gray-200
-                outline-none px-2 w-48 placeholder-gray-500 text-sm"
+              className="bg-transparent outline-none text-sm w-48
+                text-slate-900 dark:text-slate-200 placeholder-slate-500"
             />
-            <button
-              type="submit"
-              className="bg-yellow-500 hover:bg-yellow-600
-                text-black px-3 py-1 rounded-md
-                text-sm font-semibold transition"
-            >
-              Search
-            </button>
           </form>
 
           {/* RIGHT */}
-          <div className="flex items-center gap-5 text-sm font-medium">
+          <div className="flex items-center gap-4 text-sm font-medium">
 
-            {/* 🌙 THEME TOGGLE (GLOBAL) */}
+            {/* THEME TOGGLE */}
             <button
               onClick={toggleTheme}
-              className="px-3 py-1 rounded-md
-                border border-gray-400 dark:border-gray-600
-                text-gray-700 dark:text-gray-300
-                hover:text-yellow-500 transition"
+              className="p-2 rounded-md border border-slate-300 dark:border-slate-700
+                hover:bg-slate-100 dark:hover:bg-slate-900 transition"
+              title="Toggle theme"
             >
-              {theme === "dark" ? "☀️" : "🌙"}
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             </button>
-
-            <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-yellow-400 transition">
-              Home
-            </Link>
 
             <Link
               to="/cart"
-              className="relative text-gray-700 dark:text-gray-300 hover:text-yellow-400 transition"
+              className="relative flex items-center gap-1 text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white transition"
             >
-              Cart
-              <span className="ml-1 text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full">
+              <ShoppingCart size={16} />
+              <span className="hidden sm:inline">Cart</span>
+              <span className="absolute -top-2 -right-2 text-xs bg-black dark:bg-white text-white dark:text-black px-1.5 rounded-full">
                 {cartCount}
               </span>
             </Link>
 
             {user ? (
               <>
-                <Link to="/profile" className="text-gray-700 dark:text-gray-300 hover:text-yellow-400 transition">
-                  Profile
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-1 text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white transition"
+                >
+                  <User size={16} />
+                  <span className="hidden sm:inline">Profile</span>
                 </Link>
 
                 {user.isAdmin && (
-                  <Link to="/admin" className="text-red-500 hover:text-red-600 font-semibold transition">
-                    Admin
+                  <Link
+                    to="/admin"
+                    className="flex items-center gap-1 text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white transition"
+                  >
+                    <Shield size={16} />
+                    <span className="hidden sm:inline">Admin</span>
                   </Link>
                 )}
 
                 <button
                   onClick={() => setOpenLogoutDialog(true)}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md transition"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-md
+                    bg-black text-white dark:bg-white dark:text-black
+                    hover:opacity-80 transition"
                 >
-                  Logout
+                  <LogOut size={16} />
+                  <span className="hidden sm:inline">Logout</span>
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="text-gray-700 dark:text-gray-300 hover:text-yellow-400 transition">
+                <Link
+                  to="/login"
+                  className="text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white transition"
+                >
                   Login
                 </Link>
 
                 <Link
                   to="/register"
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-1.5 rounded-md transition font-semibold"
+                  className="px-4 py-1.5 rounded-md
+                    bg-black text-white dark:bg-white dark:text-black
+                    hover:opacity-80 transition font-semibold"
                 >
                   Register
                 </Link>

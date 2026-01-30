@@ -27,8 +27,6 @@ const AdminAddProduct = () => {
 
   const [loading, setLoading] = useState(false);
 
-  /* ================= IMAGE HANDLERS ================= */
-
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
 
@@ -48,8 +46,6 @@ const AdminAddProduct = () => {
     );
   };
 
-  /* ================= SUBMIT ================= */
-
   const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -60,23 +56,11 @@ const AdminAddProduct = () => {
       formData.append("productName", productName);
       formData.append("brandName", brandName);
       formData.append("category", category);
-      formData.append(
-        "shortDescription",
-        shortDescription
-      );
-      formData.append(
-        "fullDescription",
-        fullDescription
-      );
+      formData.append("shortDescription", shortDescription);
+      formData.append("fullDescription", fullDescription);
       formData.append("price", price);
-      formData.append(
-        "discountPrice",
-        discountPrice
-      );
-      formData.append(
-        "stockQuantity",
-        stockQuantity
-      );
+      formData.append("discountPrice", discountPrice);
+      formData.append("stockQuantity", stockQuantity);
 
       images.forEach((img) =>
         formData.append("images", img)
@@ -87,7 +71,6 @@ const AdminAddProduct = () => {
       await api.post("/products", formData);
 
       showAlert("Product added successfully", "success");
-
       navigate("/admin/products");
     } catch (err) {
       showAlert(
@@ -101,26 +84,23 @@ const AdminAddProduct = () => {
   };
 
   const inputClass =
-    "w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-200";
+    "w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
 
   const sectionClass =
-    "bg-gray-50 p-4 rounded-xl border space-y-4";
+    "bg-gray-50 dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 space-y-4";
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white rounded-2xl shadow">
+    <div className="max-w-6xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-lg transition-colors">
       <h1 className="text-2xl font-bold flex items-center gap-2 mb-6">
         <PackagePlus className="text-blue-600" />
         Add Product
       </h1>
 
-      <form
-        onSubmit={submitHandler}
-        className="space-y-6"
-      >
+      <form onSubmit={submitHandler} className="space-y-6">
         {/* BASIC */}
         <div className={sectionClass}>
-          <h2 className="font-semibold">
-            Basic Info
+          <h2 className="font-semibold text-lg">
+            Basic Information
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -169,7 +149,7 @@ const AdminAddProduct = () => {
 
         {/* PRICE */}
         <div className={sectionClass}>
-          <h2 className="font-semibold">
+          <h2 className="font-semibold text-lg">
             Price & Stock
           </h2>
 
@@ -204,12 +184,12 @@ const AdminAddProduct = () => {
 
         {/* MEDIA */}
         <div className={sectionClass}>
-          <h2 className="font-semibold flex items-center gap-2">
+          <h2 className="font-semibold text-lg flex items-center gap-2">
             <Image size={18} /> Media
           </h2>
 
-          <div className="flex gap-4">
-            <label className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white w-48 px-4 py-2 rounded cursor-pointer">
+          <div className="flex flex-wrap gap-4">
+            <label className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white w-48 px-4 py-2 rounded-lg cursor-pointer">
               <Image size={18} />
               Upload Images
               <input
@@ -221,7 +201,7 @@ const AdminAddProduct = () => {
               />
             </label>
 
-            <label className="inline-flex items-center justify-center gap-2 bg-gray-700 text-white w-48 px-4 py-2 rounded cursor-pointer">
+            <label className="inline-flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-800 text-white w-48 px-4 py-2 rounded-lg cursor-pointer">
               <Video size={18} />
               Upload Video
               <input
@@ -238,10 +218,7 @@ const AdminAddProduct = () => {
           {imagePreviews.length > 0 && (
             <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-4">
               {imagePreviews.map((img, i) => (
-                <div
-                  key={i}
-                  className="relative"
-                >
+                <div key={i} className="relative group">
                   <img
                     src={img}
                     className="h-24 w-full object-cover rounded-lg border"
@@ -251,7 +228,7 @@ const AdminAddProduct = () => {
                     onClick={() =>
                       removeImage(i)
                     }
-                    className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1"
+                    className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 opacity-90 hover:opacity-100"
                   >
                     <X size={14} />
                   </button>
@@ -263,7 +240,7 @@ const AdminAddProduct = () => {
 
         <button
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold"
+          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-3 rounded-xl font-semibold transition"
         >
           {loading ? "Saving..." : "Add Product"}
         </button>

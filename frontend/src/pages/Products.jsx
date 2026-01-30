@@ -8,13 +8,9 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🛒 Cart
   const { addToCart } = useContext(CartContext);
-
-  // 🔔 Alerts
   const { showAlert } = useAlert();
 
-  // 🔥 FILTER STATE
   const [filters, setFilters] = useState({
     category: "all",
     gender: "all",
@@ -37,24 +33,14 @@ const Products = () => {
     fetchProducts();
   }, []);
 
-  // 🔍 FILTER LOGIC (UNCHANGED)
   const filteredProducts = products.filter((product) => {
-    if (
-      filters.category !== "all" &&
-      product.category !== filters.category
-    )
+    if (filters.category !== "all" && product.category !== filters.category)
       return false;
 
-    if (
-      filters.gender !== "all" &&
-      product.gender !== filters.gender
-    )
+    if (filters.gender !== "all" && product.gender !== filters.gender)
       return false;
 
-    if (
-      filters.brand !== "all" &&
-      product.brandName !== filters.brand
-    )
+    if (filters.brand !== "all" && product.brandName !== filters.brand)
       return false;
 
     const price =
@@ -62,49 +48,42 @@ const Products = () => {
         ? product.discountPrice
         : product.price;
 
-    if (filters.price === "0-2000" && price > 2000)
+    if (filters.price === "0-2000" && price > 2000) return false;
+    if (filters.price === "2000-5000" && (price < 2000 || price > 5000))
       return false;
-    if (
-      filters.price === "2000-5000" &&
-      (price < 2000 || price > 5000)
-    )
-      return false;
-    if (filters.price === "5000+" && price < 5000)
-      return false;
+    if (filters.price === "5000+" && price < 5000) return false;
 
     return true;
   });
 
-  const brands = [
-    ...new Set(products.map((p) => p.brandName)),
-  ];
+  const brands = [...new Set(products.map((p) => p.brandName))];
 
   if (loading) {
     return (
-      <div className="text-center p-10 text-lg">
+      <div className="flex justify-center items-center min-h-[60vh] text-lg font-medium">
         Loading products...
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-12 gap-6">
+    <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-12 gap-8">
       {/* ===== SIDEBAR ===== */}
-      <aside className="col-span-12 md:col-span-3 bg-white rounded-xl shadow-md p-5 space-y-6 sticky top-6 h-fit">
+      <aside className="col-span-12 md:col-span-3 bg-white rounded-2xl shadow p-6 space-y-6 sticky top-6 h-fit">
         <h2 className="text-xl font-bold border-b pb-3">
           Filters
         </h2>
 
         {/* CATEGORY */}
         <div>
-          <h3 className="font-semibold mb-2">Category</h3>
+          <h3 className="font-semibold mb-3">Category</h3>
           {["all", "Smartwatch", "analog"].map((cat) => (
             <button
               key={cat}
               onClick={() =>
                 setFilters({ ...filters, category: cat })
               }
-              className={`block w-full text-left px-3 py-2 rounded-md transition
+              className={`w-full text-left px-4 py-2 rounded-lg text-sm transition
                 ${
                   filters.category === cat
                     ? "bg-black text-white"
@@ -118,14 +97,14 @@ const Products = () => {
 
         {/* GENDER */}
         <div>
-          <h3 className="font-semibold mb-2">Gender</h3>
+          <h3 className="font-semibold mb-3">Gender</h3>
           {["all", "men", "women"].map((g) => (
             <button
               key={g}
               onClick={() =>
                 setFilters({ ...filters, gender: g })
               }
-              className={`block w-full text-left px-3 py-2 rounded-md transition
+              className={`w-full text-left px-4 py-2 rounded-lg text-sm transition
                 ${
                   filters.gender === g
                     ? "bg-black text-white"
@@ -139,15 +118,12 @@ const Products = () => {
 
         {/* BRAND */}
         <div>
-          <h3 className="font-semibold mb-2">Brand</h3>
+          <h3 className="font-semibold mb-3">Brand</h3>
           <select
-            className="w-full border rounded-md px-3 py-2"
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
             value={filters.brand}
             onChange={(e) =>
-              setFilters({
-                ...filters,
-                brand: e.target.value,
-              })
+              setFilters({ ...filters, brand: e.target.value })
             }
           >
             <option value="all">All</option>
@@ -161,7 +137,7 @@ const Products = () => {
 
         {/* PRICE */}
         <div>
-          <h3 className="font-semibold mb-2">Price</h3>
+          <h3 className="font-semibold mb-3">Price</h3>
           {[
             { label: "All", value: "all" },
             { label: "Below ₹2000", value: "0-2000" },
@@ -173,7 +149,7 @@ const Products = () => {
               onClick={() =>
                 setFilters({ ...filters, price: p.value })
               }
-              className={`block w-full text-left px-3 py-2 rounded-md transition
+              className={`w-full text-left px-4 py-2 rounded-lg text-sm transition
                 ${
                   filters.price === p.value
                     ? "bg-black text-white"
@@ -188,7 +164,7 @@ const Products = () => {
 
       {/* ===== PRODUCTS ===== */}
       <section className="col-span-12 md:col-span-9">
-        <h1 className="text-3xl font-bold mb-6">
+        <h1 className="text-3xl font-bold mb-8">
           Products
         </h1>
 
@@ -198,15 +174,14 @@ const Products = () => {
           </p>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
             <div
               key={product._id}
-              className="border rounded-lg bg-white p-3 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              className="bg-white rounded-2xl p-4 text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
               <Link to={`/product/${product._id}`}>
-                {/* IMAGE FIX (1.1 RATIO SAFE) */}
-                <div className="bg-gray-100 rounded-md h-[180px] flex items-center justify-center overflow-hidden">
+                <div className="bg-gray-100 rounded-xl h-[190px] flex items-center justify-center overflow-hidden">
                   <img
                     src={product.images?.[0]?.url}
                     alt={product.productName}
@@ -215,38 +190,34 @@ const Products = () => {
                 </div>
               </Link>
 
-              <h3  className="mt-2 font-semibold text-base">
+              <h3 className="mt-3 font-semibold text-sm line-clamp-2">
                 {product.productName}
               </h3>
 
-              <p className="mt-0.5 text-sm">
+              <p className="mt-1 text-sm">
                 {product.discountPrice > 0 ? (
                   <>
-                    <span className="line-through text-gray-500 mr-2">
+                    <span className="line-through text-gray-400 mr-2">
                       ₹{product.price}
                     </span>
-                    <strong>
+                    <span className="font-bold">
                       ₹{product.discountPrice}
-                    </strong>
+                    </span>
                   </>
                 ) : (
-                  <strong>₹{product.price}</strong>
+                  <span className="font-bold">
+                    ₹{product.price}
+                  </span>
                 )}
               </p>
 
-              {/* 🛒 ADD TO CART — HOME JAISE */}
               <button
-                disabled={
-                  product.stockStatus !== "in_stock"
-                }
+                disabled={product.stockStatus !== "in_stock"}
                 onClick={() => {
                   addToCart(product, 1);
-                  showAlert(
-                    "Product added to cart",
-                    "success"
-                  );
+                  showAlert("Product added to cart", "success");
                 }}
-                className={`mt-2 w-full py-1.5 rounded-md text-sm text-white transition
+                className={`mt-3 w-full py-2 rounded-lg text-sm text-white transition
                   ${
                     product.stockStatus === "in_stock"
                       ? "bg-black hover:bg-gray-800"
@@ -260,7 +231,7 @@ const Products = () => {
 
               <Link
                 to={`/product/${product._id}`}
-                className="inline-block mt-2 font-semibold text-black hover:underline"
+                className="inline-block mt-3 text-sm font-semibold hover:underline"
               >
                 View Details →
               </Link>

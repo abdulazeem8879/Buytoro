@@ -4,7 +4,6 @@ import { useAlert } from "../../context/AlertContext";
 
 const AdminDashboard = () => {
   const { showAlert } = useAlert();
-
   const [loading, setLoading] = useState(true);
 
   const [stats, setStats] = useState({
@@ -35,7 +34,6 @@ const AdminDashboard = () => {
         const products = productsRes.data.length;
         const orders = ordersRes.data;
 
-        // ✅ ADMIN USERS EXCLUDED
         const normalUsers = usersRes.data.filter(
           (user) => !user.isAdmin
         );
@@ -56,8 +54,7 @@ const AdminDashboard = () => {
           users: normalUsers.length,
           revenue,
           paidOrders: paidOrders.length,
-          unpaidOrders:
-            orders.length - paidOrders.length,
+          unpaidOrders: orders.length - paidOrders.length,
           deliveredOrders: deliveredOrders.length,
           pendingDelivery:
             orders.length - deliveredOrders.length,
@@ -78,122 +75,150 @@ const AdminDashboard = () => {
     fetchDashboardData();
   }, [showAlert]);
 
-  if (loading) return <p>Loading dashboard...</p>;
+  if (loading)
+    return (
+      <p className="text-center mt-10">
+        Loading dashboard...
+      </p>
+    );
 
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
+    <div className="space-y-10">
+      <h1 className="text-3xl font-bold">
+        Admin Dashboard
+      </h1>
 
       {/* TOP STATS */}
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          marginTop: "20px",
-        }}
-      >
-        <StatCard
-          title="Total Products"
-          value={stats.products}
-        />
-        <StatCard
-          title="Total Orders"
-          value={stats.orders}
-        />
-        <StatCard
-          title="Total Users"
-          value={stats.users}
-        />
-        <StatCard
-          title="Total Revenue"
-          value={`₹${stats.revenue}`}
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow text-center">
+          <p className="text-sm text-gray-500">
+            Total Products
+          </p>
+          <p className="text-2xl font-bold">
+            {stats.products}
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow text-center">
+          <p className="text-sm text-gray-500">
+            Total Orders
+          </p>
+          <p className="text-2xl font-bold">
+            {stats.orders}
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow text-center">
+          <p className="text-sm text-gray-500">
+            Total Users
+          </p>
+          <p className="text-2xl font-bold">
+            {stats.users}
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow text-center">
+          <p className="text-sm text-gray-500">
+            Revenue
+          </p>
+          <p className="text-2xl font-bold text-green-600">
+            ₹{stats.revenue}
+          </p>
+        </div>
       </div>
 
       {/* ORDER STATUS */}
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          marginTop: "30px",
-        }}
-      >
-        <StatCard
-          title="Paid Orders"
-          value={stats.paidOrders}
-        />
-        <StatCard
-          title="Unpaid Orders"
-          value={stats.unpaidOrders}
-        />
-        <StatCard
-          title="Delivered Orders"
-          value={stats.deliveredOrders}
-        />
-        <StatCard
-          title="Pending Delivery"
-          value={stats.pendingDelivery}
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-xl text-center">
+          <p className="text-sm">Paid Orders</p>
+          <p className="text-xl font-semibold">
+            {stats.paidOrders}
+          </p>
+        </div>
+
+        <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-xl text-center">
+          <p className="text-sm">Unpaid Orders</p>
+          <p className="text-xl font-semibold">
+            {stats.unpaidOrders}
+          </p>
+        </div>
+
+        <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-xl text-center">
+          <p className="text-sm">
+            Delivered Orders
+          </p>
+          <p className="text-xl font-semibold">
+            {stats.deliveredOrders}
+          </p>
+        </div>
+
+        <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-xl text-center">
+          <p className="text-sm">
+            Pending Delivery
+          </p>
+          <p className="text-xl font-semibold">
+            {stats.pendingDelivery}
+          </p>
+        </div>
       </div>
 
       {/* RECENT ORDERS */}
-      <h2 style={{ marginTop: "40px" }}>
-        Recent Orders
-      </h2>
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow overflow-x-auto">
+        <h2 className="text-xl font-semibold p-6">
+          Recent Orders
+        </h2>
 
-      <table width="100%" style={{ marginTop: "10px" }}>
-        <thead>
-          <tr>
-            <th align="left">Order ID</th>
-            <th align="left">User</th>
-            <th align="left">Amount</th>
-            <th>Paid</th>
-            <th>Delivered</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {recentOrders.map((order) => (
-            <tr key={order._id}>
-              <td>{order._id}</td>
-              <td>
-                {order.user?.email || "N/A"}
-              </td>
-              <td>₹{order.totalPrice}</td>
-              <td align="center">
-                {order.isPaid ? "Yes" : "No"}
-              </td>
-              <td align="center">
-                {order.isDelivered ? "Yes" : "No"}
-              </td>
+        <table className="w-full text-sm">
+          <thead className="bg-gray-100 dark:bg-gray-800">
+            <tr>
+              <th className="p-3 text-left">
+                Order ID
+              </th>
+              <th className="p-3 text-left">
+                User
+              </th>
+              <th className="p-3 text-left">
+                Amount
+              </th>
+              <th className="p-3 text-center">
+                Paid
+              </th>
+              <th className="p-3 text-center">
+                Delivered
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {recentOrders.map((order) => (
+              <tr
+                key={order._id}
+                className="border-t dark:border-gray-700"
+              >
+                <td className="p-3">
+                  {order._id}
+                </td>
+                <td className="p-3">
+                  {order.user?.email || "N/A"}
+                </td>
+                <td className="p-3">
+                  ₹{order.totalPrice}
+                </td>
+                <td className="p-3 text-center">
+                  {order.isPaid ? "Yes" : "No"}
+                </td>
+                <td className="p-3 text-center">
+                  {order.isDelivered
+                    ? "Yes"
+                    : "No"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
-};
-
-const StatCard = ({ title, value }) => (
-  <div style={cardStyle}>
-    <h3>{title}</h3>
-    <p
-      style={{
-        fontSize: "20px",
-        fontWeight: "bold",
-      }}
-    >
-      {value}
-    </p>
-  </div>
-);
-
-const cardStyle = {
-  background: "#f4f4f4",
-  padding: "20px",
-  borderRadius: "8px",
-  width: "200px",
-  textAlign: "center",
 };
 
 export default AdminDashboard;

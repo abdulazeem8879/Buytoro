@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { createOrder } from "../services/orderService";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "../context/AlertContext";
+import { MapPin, CreditCard, FileText } from "lucide-react";
 
 const PlaceOrder = () => {
   const { cartItems, clearCart } = useContext(CartContext);
@@ -18,7 +19,6 @@ const PlaceOrder = () => {
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [loading, setLoading] = useState(false);
 
-  // Prices
   const itemsPrice = cartItems.reduce(
     (acc, item) =>
       acc +
@@ -35,23 +35,13 @@ const PlaceOrder = () => {
     itemsPrice + shippingPrice + taxPrice;
 
   const placeOrderHandler = async () => {
-    // ❌ Empty cart
     if (cartItems.length === 0) {
       showAlert("Your cart is empty", "warning");
       return;
     }
 
-    // ❌ Missing address fields
-    if (
-      !address ||
-      !city ||
-      !postalCode ||
-      !country
-    ) {
-      showAlert(
-        "Please fill all shipping details",
-        "warning"
-      );
+    if (!address || !city || !postalCode || !country) {
+      showAlert("Please fill all shipping details", "warning");
       return;
     }
 
@@ -84,13 +74,8 @@ const PlaceOrder = () => {
 
       const createdOrder = await createOrder(orderData);
 
-      clearCart(); // ✅ clear cart only after success
-
-      showAlert(
-        "Order placed successfully",
-        "success"
-      );
-
+      clearCart();
+      showAlert("Order placed successfully", "success");
       navigate(`/order/${createdOrder._id}`);
     } catch (error) {
       showAlert(
@@ -106,102 +91,72 @@ const PlaceOrder = () => {
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
       <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-        {/* LEFT SECTION */}
+
+        {/* LEFT */}
         <div className="md:col-span-2 space-y-6">
-          {/* Shipping */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <h2 className="text-xl font-semibold mb-4">
-              🚚 Shipping Address
+
+          {/* SHIPPING */}
+          <div className="bg-white rounded-2xl shadow p-6">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <MapPin size={20} /> Shipping Address
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                className="input"
-                placeholder="Address"
-                value={address}
-                onChange={(e) =>
-                  setAddress(e.target.value)
-                }
-              />
-              <input
-                className="input"
-                placeholder="City"
-                value={city}
-                onChange={(e) =>
-                  setCity(e.target.value)
-                }
-              />
-              <input
-                className="input"
-                placeholder="Postal Code"
-                value={postalCode}
-                onChange={(e) =>
-                  setPostalCode(e.target.value)
-                }
-              />
-              <input
-                className="input"
-                placeholder="Country"
-                value={country}
-                onChange={(e) =>
-                  setCountry(e.target.value)
-                }
-              />
+              <input className="input" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
+              <input className="input" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+              <input className="input" placeholder="Postal Code" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} />
+              <input className="input" placeholder="Country" value={country} onChange={(e) => setCountry(e.target.value)} />
             </div>
           </div>
 
-          {/* Payment */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <h2 className="text-xl font-semibold mb-4">
-              💳 Payment Method
+          {/* PAYMENT */}
+          <div className="bg-white rounded-2xl shadow p-6">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <CreditCard size={20} /> Payment Method
             </h2>
 
             <select
               className="input"
               value={paymentMethod}
-              onChange={(e) =>
-                setPaymentMethod(e.target.value)
-              }
+              onChange={(e) => setPaymentMethod(e.target.value)}
             >
-              <option value="COD">
-                Cash on Delivery
-              </option>
+              <option value="COD">Cash on Delivery</option>
               <option value="CARD">Card</option>
             </select>
           </div>
         </div>
 
-        {/* RIGHT SECTION */}
-        <div className="bg-white rounded-xl shadow p-6 h-fit">
-          <h2 className="text-xl font-semibold mb-4">
-            🧾 Order Summary
+        {/* RIGHT */}
+        <div className="bg-white rounded-2xl shadow p-6 h-fit">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <FileText size={20} /> Order Summary
           </h2>
 
-          <div className="space-y-2 text-gray-700">
+          <div className="space-y-3 text-gray-700">
             <div className="flex justify-between">
               <span>Items</span>
               <span>₹{itemsPrice}</span>
             </div>
             <div className="flex justify-between">
               <span>Shipping</span>
-              <span>₹{shippingPrice}</span>
+              <span>{shippingPrice === 0 ? "Free" : `₹${shippingPrice}`}</span>
             </div>
             <div className="flex justify-between">
               <span>Tax</span>
               <span>₹{taxPrice}</span>
             </div>
-            <hr />
-            <div className="flex justify-between text-lg font-bold">
+
+            <div className="border-t pt-3 flex justify-between text-lg font-bold">
               <span>Total</span>
-              <span>₹{totalPrice}</span>
+              <span className="text-green-600">₹{totalPrice}</span>
             </div>
           </div>
 
           <button
             onClick={placeOrderHandler}
             disabled={loading || cartItems.length === 0}
-            className="w-full mt-6 py-3 bg-blue-600 text-white rounded-lg 
-              hover:bg-blue-700 transition duration-200 
+            className="w-full mt-6 py-3 bg-blue-600 text-white rounded-xl
+              hover:bg-blue-700 transition
               disabled:bg-gray-400"
           >
             {loading ? "Placing Order..." : "Place Order"}

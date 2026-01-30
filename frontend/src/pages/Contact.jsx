@@ -1,6 +1,7 @@
 import { useState } from "react";
 import emailjs from "@emailjs/browser";
 import { useAlert } from "../context/AlertContext";
+import { Mail, User, MessageSquare } from "lucide-react";
 
 const Contact = () => {
   const { showAlert } = useAlert();
@@ -27,7 +28,6 @@ const Contact = () => {
       );
 
       showAlert("Message sent successfully!", "success");
-
       setForm({ name: "", email: "", message: "" });
     } catch (err) {
       showAlert("Failed to send message", "error");
@@ -35,48 +35,76 @@ const Contact = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">
-        Contact Support
-      </h1>
+    <div className="min-h-[70vh] flex items-center justify-center px-4">
+      <div className="w-full max-w-xl">
+        <h1 className="text-3xl font-bold text-center mb-2">
+          Contact Support
+        </h1>
+        <p className="text-center text-gray-500 mb-8">
+          We’d love to hear from you
+        </p>
 
-      <form
-        onSubmit={submitHandler}
-        className="space-y-4 bg-white p-6 rounded-lg shadow"
-      >
-        <input
-          name="name"
-          placeholder="Your Name"
-          value={form.name}
-          onChange={handleChange}
-          required
-          className="w-full border px-3 py-2 rounded"
-        />
+        <form
+          onSubmit={submitHandler}
+          className="space-y-5 bg-white dark:bg-gray-800
+            p-6 md:p-8 rounded-2xl shadow-md"
+        >
+          {/* NAME */}
+          <div className="relative">
+            <User className="absolute left-3 top-3 text-gray-400" size={18} />
+            <input
+              name="name"
+              placeholder="Your Name"
+              value={form.name}
+              onChange={handleChange}
+              required
+              className="w-full pl-10 pr-3 py-2 border rounded-lg
+                focus:ring-2 focus:ring-black outline-none"
+            />
+          </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Your Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-          className="w-full border px-3 py-2 rounded"
-        />
+          {/* EMAIL */}
+          <div className="relative">
+            <Mail className="absolute left-3 top-3 text-gray-400" size={18} />
+            <input
+              type="email"
+              name="email"
+              placeholder="Your Email"
+              value={form.email}
+              onChange={handleChange}
+              required
+              className="w-full pl-10 pr-3 py-2 border rounded-lg
+                focus:ring-2 focus:ring-black outline-none"
+            />
+          </div>
 
-        <textarea
-          name="message"
-          placeholder="Your Message"
-          rows="4"
-          value={form.message}
-          onChange={handleChange}
-          required
-          className="w-full border px-3 py-2 rounded"
-        />
+          {/* MESSAGE */}
+          <div className="relative">
+            <MessageSquare
+              className="absolute left-3 top-3 text-gray-400"
+              size={18}
+            />
+            <textarea
+              name="message"
+              placeholder="Your Message"
+              rows="4"
+              value={form.message}
+              onChange={handleChange}
+              required
+              className="w-full pl-10 pr-3 py-2 border rounded-lg
+                focus:ring-2 focus:ring-black outline-none resize-none"
+            />
+          </div>
 
-        <button className="w-full bg-black text-white py-2 rounded hover:bg-gray-800">
-          Send Message
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="w-full bg-black text-white py-2.5 rounded-lg
+              hover:bg-gray-800 transition font-medium"
+          >
+            Send Message
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

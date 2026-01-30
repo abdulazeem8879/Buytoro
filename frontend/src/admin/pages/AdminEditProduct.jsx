@@ -5,11 +5,14 @@ import api from "../../services/api";
 import { useAlert } from "../../context/AlertContext";
 
 const inputClass =
-  "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500";
 const textareaClass =
-  "w-full px-3 py-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500";
 const selectClass =
-  "w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500";
+
+const sectionClass =
+  "bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 space-y-3";
 
 const AdminEditProduct = () => {
   const { id } = useParams();
@@ -79,11 +82,7 @@ const AdminEditProduct = () => {
 
         setExistingImages(data.images || []);
       } catch (err) {
-        showAlert(
-          err.response?.data?.message ||
-            "Failed to load product",
-          "error"
-        );
+        showAlert("Failed to load product", "error");
       } finally {
         setLoading(false);
       }
@@ -92,122 +91,59 @@ const AdminEditProduct = () => {
     fetchProduct();
   }, [id, showAlert]);
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-
-    try {
-      const formData = new FormData();
-
-      formData.append("productName", productName);
-      formData.append("brandName", brandName);
-      formData.append("category", category);
-      formData.append("shortDescription", shortDescription);
-      formData.append("fullDescription", fullDescription);
-
-      formData.append("price", price);
-      formData.append("discountPrice", discountPrice);
-      formData.append("stockQuantity", stockQuantity);
-      formData.append("stockStatus", stockStatus);
-
-      formData.append("watchType", watchType);
-      formData.append("strapMaterial", strapMaterial);
-      formData.append("strapColor", strapColor);
-      formData.append("dialColor", dialColor);
-      formData.append("waterResistance", waterResistance);
-      formData.append("warrantyPeriod", warrantyPeriod);
-
-      formData.append("shippingCharges", shippingCharges);
-      formData.append("deliveryTime", deliveryTime);
-      formData.append("returnPolicy", returnPolicy);
-
-      newImages.forEach((img) =>
-        formData.append("images", img)
-      );
-      if (video)
-        formData.append("productVideo", video);
-
-      await api.put(`/products/${id}`, formData);
-
-      showAlert("Product updated successfully", "success");
-
-      navigate("/admin/products");
-    } catch (err) {
-      showAlert(
-        err.response?.data?.message ||
-          "Failed to update product",
-        "error"
-      );
-    } finally {
-      setSaving(false);
-    }
-  };
-
   if (loading) return <p className="p-6">Loading...</p>;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6">
         <h1 className="text-2xl font-bold mb-6">
           Edit Product
         </h1>
 
-        <form
-          onSubmit={submitHandler}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
-        >
-          <input className={inputClass} value={productName} onChange={(e)=>setProductName(e.target.value)} placeholder="Product Name" required />
-          <input className={inputClass} value={brandName} onChange={(e)=>setBrandName(e.target.value)} placeholder="Brand Name" required />
-          <input className={inputClass} value={category} onChange={(e)=>setCategory(e.target.value)} placeholder="Category" required />
-
-          <input type="number" className={inputClass} value={price} onChange={(e)=>setPrice(e.target.value)} placeholder="Price" required />
-          <input type="number" className={inputClass} value={discountPrice} onChange={(e)=>setDiscountPrice(e.target.value)} placeholder="Discount Price" />
-          <input type="number" className={inputClass} value={stockQuantity} onChange={(e)=>setStockQuantity(e.target.value)} placeholder="Stock Quantity" />
-
-          <select className={selectClass} value={stockStatus} onChange={(e)=>setStockStatus(e.target.value)}>
-            <option value="in_stock">In Stock</option>
-            <option value="out_of_stock">Out of Stock</option>
-          </select>
-
-          <select className={selectClass} value={watchType} onChange={(e)=>setWatchType(e.target.value)}>
-            <option value="">Watch Type</option>
-            <option value="Analog">Analog</option>
-            <option value="Digital">Digital</option>
-            <option value="Smart">Smart</option>
-          </select>
-
-          <input className={inputClass} value={strapMaterial} onChange={(e)=>setStrapMaterial(e.target.value)} placeholder="Strap Material" />
-          <input className={inputClass} value={strapColor} onChange={(e)=>setStrapColor(e.target.value)} placeholder="Strap Color" />
-          <input className={inputClass} value={dialColor} onChange={(e)=>setDialColor(e.target.value)} placeholder="Dial Color" />
-          <input className={inputClass} value={waterResistance} onChange={(e)=>setWaterResistance(e.target.value)} placeholder="Water Resistance" />
-          <input className={inputClass} value={warrantyPeriod} onChange={(e)=>setWarrantyPeriod(e.target.value)} placeholder="Warranty Period" />
-
-          <textarea className={textareaClass} value={shortDescription} onChange={(e)=>setShortDescription(e.target.value)} placeholder="Short Description" />
-          <textarea className={textareaClass} value={fullDescription} onChange={(e)=>setFullDescription(e.target.value)} placeholder="Full Description" />
-
-          <input type="number" className={inputClass} value={shippingCharges} onChange={(e)=>setShippingCharges(e.target.value)} placeholder="Shipping Charges" />
-          <input className={inputClass} value={deliveryTime} onChange={(e)=>setDeliveryTime(e.target.value)} placeholder="Delivery Time" />
-          <input className={inputClass} value={returnPolicy} onChange={(e)=>setReturnPolicy(e.target.value)} placeholder="Return Policy" />
-
-          <div className="col-span-2 flex gap-3 flex-wrap">
-            {existingImages.map((img, i) => (
-              <img key={i} src={img.url} className="w-20 h-20 object-cover rounded border" />
-            ))}
+        <form onSubmit={() => {}} className="space-y-6">
+          {/* BASIC */}
+          <div className={sectionClass}>
+            <h2 className="font-semibold">Basic Info</h2>
+            <input className={inputClass} value={productName} onChange={(e)=>setProductName(e.target.value)} placeholder="Product Name" />
+            <input className={inputClass} value={brandName} onChange={(e)=>setBrandName(e.target.value)} placeholder="Brand Name" />
+            <input className={inputClass} value={category} onChange={(e)=>setCategory(e.target.value)} placeholder="Category" />
           </div>
 
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <Image size={18} /> Upload Images
-            <input type="file" multiple hidden onChange={(e)=>setNewImages([...e.target.files])} />
-          </label>
+          {/* PRICE */}
+          <div className={sectionClass}>
+            <h2 className="font-semibold">Price & Stock</h2>
+            <input type="number" className={inputClass} value={price} onChange={(e)=>setPrice(e.target.value)} placeholder="Price" />
+            <input type="number" className={inputClass} value={discountPrice} onChange={(e)=>setDiscountPrice(e.target.value)} placeholder="Discount Price" />
+            <input type="number" className={inputClass} value={stockQuantity} onChange={(e)=>setStockQuantity(e.target.value)} placeholder="Stock Quantity" />
+            <select className={selectClass} value={stockStatus} onChange={(e)=>setStockStatus(e.target.value)}>
+              <option value="in_stock">In Stock</option>
+              <option value="out_of_stock">Out of Stock</option>
+            </select>
+          </div>
 
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <Video size={18} /> Upload Video
-            <input type="file" accept="video/*" hidden onChange={(e)=>setVideo(e.target.files[0])} />
-          </label>
+          {/* MEDIA */}
+          <div className={sectionClass}>
+            <h2 className="font-semibold">Media</h2>
+            <div className="flex gap-3 flex-wrap">
+              {existingImages.map((img, i) => (
+                <img key={i} src={img.url} className="w-20 h-20 object-cover rounded-lg border" />
+              ))}
+            </div>
+
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <Image size={16} /> Upload Images
+              <input type="file" multiple hidden onChange={(e)=>setNewImages([...e.target.files])} />
+            </label>
+
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <Video size={16} /> Upload Video
+              <input type="file" accept="video/*" hidden onChange={(e)=>setVideo(e.target.files[0])} />
+            </label>
+          </div>
 
           <button
-            className="col-span-2 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
             disabled={saving}
+            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold"
           >
             <Save size={18} />
             {saving ? "Updating..." : "Update Product"}

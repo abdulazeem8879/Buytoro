@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { getOrderById } from "../services/orderService";
 import { useAlert } from "../context/AlertContext";
 import { AuthContext } from "../context/AuthContext";
+import { ArrowLeft } from "lucide-react";
 
 const Order = () => {
   const { id } = useParams();
@@ -33,12 +34,15 @@ const Order = () => {
     fetchOrder();
   }, [id, navigate, showAlert]);
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <h2 className="text-xl font-semibold">Loading order...</h2>
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <h2 className="text-xl font-semibold">
+          Loading order details...
+        </h2>
       </div>
     );
+  }
 
   if (!order) return null;
 
@@ -46,34 +50,27 @@ const Order = () => {
     <div className="min-h-screen bg-gray-100 py-10 px-4">
       <div className="max-w-5xl mx-auto space-y-6">
 
-        {/* 🔙 BACK BUTTON (ROLE BASED) */}
-        <div>
-          {user?.isAdmin ? (
-            <Link
-              to="/admin/orders"
-              className="inline-block mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
-            >
-              ← Back to Admin Orders
-            </Link>
-          ) : (
-            <Link
-              to="/my-orders"
-              className="inline-block mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
-            >
-              ← Back to My Orders
-            </Link>
-          )}
-        </div>
+        {/* 🔙 BACK */}
+        <Link
+          to={user?.isAdmin ? "/admin/orders" : "/my-orders"}
+          className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 bg-white rounded-lg shadow hover:bg-gray-50 transition"
+        >
+          <ArrowLeft size={16} />
+          {user?.isAdmin ? "Back to Admin Orders" : "Back to My Orders"}
+        </Link>
 
-        {/* Order Header */}
-        <div className="bg-white rounded-xl shadow p-6">
+        {/* ===== ORDER HEADER ===== */}
+        <div className="bg-white rounded-2xl shadow p-6">
           <h1 className="text-2xl font-bold">
-            Order <span className="text-blue-600">#{order._id}</span>
+            Order{" "}
+            <span className="text-blue-600">
+              #{order._id.slice(-8)}
+            </span>
           </h1>
 
-          <div className="mt-3 flex flex-wrap gap-4">
+          <div className="mt-4 flex flex-wrap gap-3">
             <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${
                 order.isPaid
                   ? "bg-green-100 text-green-700"
                   : "bg-red-100 text-red-700"
@@ -83,7 +80,7 @@ const Order = () => {
             </span>
 
             <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${
                 order.isCancelled
                   ? "bg-gray-200 text-gray-700"
                   : order.isDelivered
@@ -100,38 +97,41 @@ const Order = () => {
           </div>
         </div>
 
-        {/* Shipping */}
-        <div className="bg-white rounded-xl shadow p-6">
+        {/* ===== SHIPPING ===== */}
+        <div className="bg-white rounded-2xl shadow p-6">
           <h2 className="text-xl font-semibold mb-2">
             🚚 Shipping Address
           </h2>
-          <p className="text-gray-700">
+
+          <p className="text-gray-700 leading-relaxed">
             {order.shippingAddress.address},{" "}
             {order.shippingAddress.city},{" "}
             {order.shippingAddress.country}
           </p>
         </div>
 
-        {/* Order Items */}
-        <div className="bg-white rounded-xl shadow p-6">
+        {/* ===== ORDER ITEMS ===== */}
+        <div className="bg-white rounded-2xl shadow p-6">
           <h2 className="text-xl font-semibold mb-4">
             🛒 Order Items
           </h2>
 
-          <div className="space-y-4">
+          <div className="divide-y">
             {order.orderItems.map((item) => (
               <div
                 key={item._id}
-                className="flex items-center gap-4 border-b pb-4 last:border-b-0"
+                className="flex items-center gap-4 py-4"
               >
                 <img
                   src={item.image}
                   alt={item.productName}
-                  className="w-16 h-16 object-cover rounded-lg border"
+                  className="w-16 h-16 object-cover rounded-xl border"
                 />
 
                 <div className="flex-1">
-                  <p className="font-medium">{item.productName}</p>
+                  <p className="font-medium">
+                    {item.productName}
+                  </p>
                   <p className="text-sm text-gray-500">
                     Qty: {item.qty}
                   </p>
@@ -145,14 +145,17 @@ const Order = () => {
           </div>
         </div>
 
-        {/* Order Summary */}
-        <div className="bg-white rounded-xl shadow p-6">
+        {/* ===== SUMMARY ===== */}
+        <div className="bg-white rounded-2xl shadow p-6">
           <h2 className="text-xl font-semibold mb-3">
             💰 Order Summary
           </h2>
-          <div className="flex justify-between text-lg font-bold">
+
+          <div className="flex justify-between items-center text-lg font-bold">
             <span>Total Amount</span>
-            <span>₹{order.totalPrice}</span>
+            <span className="text-green-600">
+              ₹{order.totalPrice}
+            </span>
           </div>
         </div>
       </div>

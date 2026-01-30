@@ -3,6 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "../../context/AlertContext";
+import { AlertTriangle, Trash2 } from "lucide-react";
 
 // MUI
 import {
@@ -53,26 +54,39 @@ const Security = () => {
         </h1>
 
         {/* ===== DANGER ZONE ===== */}
-        <div className="bg-white border border-red-300 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-red-600 mb-2">
-            Danger Zone
-          </h2>
+        <div
+          className="bg-red-50 dark:bg-red-950/30
+            border border-red-300 dark:border-red-800
+            rounded-xl p-6"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="text-red-600" />
+            <h2 className="text-xl font-semibold text-red-600">
+              Danger Zone
+            </h2>
+          </div>
 
-          <p className="text-gray-700 mb-4">
+          <p className="text-gray-700 dark:text-gray-300 mb-6">
             Deleting your account will permanently remove your
-            profile and profile image. This action cannot be
-            undone.
+            profile, profile image and all associated data.
+            <span className="font-semibold text-red-600">
+              {" "}
+              This action cannot be undone.
+            </span>
           </p>
 
           <button
             onClick={() => setOpenDeleteDialog(true)}
             disabled={loading}
-            className={`px-6 py-2 text-white rounded ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-red-600 hover:bg-red-700"
-            }`}
+            className={`flex items-center gap-2 px-6 py-2
+              text-white rounded-lg transition
+              ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-red-600 hover:bg-red-700"
+              }`}
           >
+            <Trash2 size={18} />
             Delete Account
           </button>
         </div>
@@ -83,11 +97,14 @@ const Security = () => {
         open={openDeleteDialog}
         onClose={() => setOpenDeleteDialog(false)}
       >
-        <DialogTitle>Delete Account</DialogTitle>
+        <DialogTitle className="flex items-center gap-2 text-red-600">
+          <AlertTriangle />
+          Delete Account
+        </DialogTitle>
 
         <DialogContent>
-          This action is permanent. Are you sure you want to
-          delete your account?
+          This action is permanent. All your data will be lost
+          forever. Are you absolutely sure?
         </DialogContent>
 
         <DialogActions>

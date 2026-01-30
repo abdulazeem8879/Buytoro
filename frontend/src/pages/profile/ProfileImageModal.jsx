@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import api from "../../services/api";
 import { AuthContext } from "../../context/AuthContext";
 import { useAlert } from "../../context/AlertContext";
+import { Camera, Trash2, X } from "lucide-react";
 
 // MUI
 import {
@@ -39,9 +40,7 @@ const ProfileImageModal = ({
         removeImage: true,
       });
 
-      // update auth context (no reload)
       setUser(data);
-
       showAlert("Profile image removed", "success");
 
       setOpenRemoveDialog(false);
@@ -59,34 +58,55 @@ const ProfileImageModal = ({
 
   return (
     <>
-      {/* ===== MODAL ===== */}
+      {/* ===== CUSTOM MODAL ===== */}
       <div
-        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm
+          flex items-center justify-center z-50"
         onClick={onClose}
       >
         <div
-          className="bg-white rounded-xl p-6 w-96 text-center"
           onClick={(e) => e.stopPropagation()}
+          className="relative bg-white dark:bg-gray-900
+            rounded-2xl p-6 w-[22rem] text-center
+            shadow-xl border dark:border-gray-800"
         >
+          {/* CLOSE */}
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 text-gray-500
+              hover:text-gray-800 dark:hover:text-white"
+          >
+            <X size={18} />
+          </button>
+
+          {/* IMAGE */}
           <img
             src={imageUrl || DEFAULT_AVATAR}
-            alt="Profile Large"
-            className="w-48 h-48 rounded-full mx-auto object-cover mb-6"
+            alt="Profile"
+            className="w-44 h-44 rounded-full mx-auto
+              object-cover border-4 border-blue-500 mb-6"
           />
 
+          {/* ACTIONS */}
           <div className="flex gap-3 justify-center">
             <button
               onClick={onChangeProfile}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="flex items-center gap-2 px-4 py-2
+                bg-blue-600 text-white rounded-lg
+                hover:bg-blue-700 transition"
             >
-              Change Profile
+              <Camera size={16} />
+              Change
             </button>
 
             <button
               onClick={() => setOpenRemoveDialog(true)}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              className="flex items-center gap-2 px-4 py-2
+                bg-red-600 text-white rounded-lg
+                hover:bg-red-700 transition"
             >
-              Remove Profile
+              <Trash2 size={16} />
+              Remove
             </button>
           </div>
         </div>
