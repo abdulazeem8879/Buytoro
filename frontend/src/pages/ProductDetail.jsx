@@ -36,26 +36,21 @@ const ProductDetail = () => {
     fetchProduct();
   }, [id]);
 
-  if (loading)
-    return <p className="text-slate-500">Loading product...</p>;
-
-  if (error)
-    return <p className="text-red-500">{error}</p>;
-
+  if (loading) return <p className="text-slate-500">Loading product...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
   if (!product) return null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-
       {/* ===== LEFT : MEDIA ===== */}
-      <div>
+      <div className="space-y-4">
         {/* MAIN MEDIA */}
-        <div className="bg-black rounded-xl overflow-hidden flex items-center justify-center aspect-[1/1.1]">
+        <div className="bg-slate-100 dark:bg-slate-900 rounded-xl flex items-center justify-center h-[420px] overflow-hidden border border-slate-200 dark:border-slate-800">
           {activeMedia?.type === "image" && (
             <img
               src={activeMedia.url}
               alt={product.productName}
-              className="max-h-[70vh] object-contain"
+              className="max-h-full max-w-full object-contain"
             />
           )}
 
@@ -65,20 +60,20 @@ const ProductDetail = () => {
               controls
               muted
               autoPlay
-              className="max-h-[70vh]"
+              className="max-h-full"
             />
           )}
         </div>
 
         {/* THUMBNAILS */}
-        <div className="flex gap-3 mt-4">
+        <div className="flex gap-3 overflow-x-auto pb-1">
           {product.images?.map((img, index) => (
             <button
               key={`img-${index}`}
               onClick={() =>
                 setActiveMedia({ type: "image", url: img.url })
               }
-              className={`w-16 h-16 rounded-md overflow-hidden border
+              className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border transition
                 ${
                   activeMedia?.url === img.url
                     ? "border-black dark:border-white"
@@ -101,7 +96,7 @@ const ProductDetail = () => {
                   url: product.productVideo.url,
                 })
               }
-              className={`w-16 h-16 flex items-center justify-center rounded-md border
+              className={`flex-shrink-0 w-16 h-16 rounded-lg border flex items-center justify-center
                 ${
                   activeMedia?.type === "video"
                     ? "border-black dark:border-white"
@@ -115,7 +110,7 @@ const ProductDetail = () => {
       </div>
 
       {/* ===== RIGHT : DETAILS ===== */}
-      <div className="space-y-4">
+      <div className="space-y-5">
         <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">
           {product.productName}
         </h1>
@@ -126,10 +121,10 @@ const ProductDetail = () => {
         </p>
 
         {/* PRICE */}
-        <p className="text-xl font-semibold">
+        <p className="text-2xl font-semibold text-slate-900 dark:text-white">
           {product.discountPrice > 0 ? (
             <>
-              <span className="line-through text-slate-400 mr-2">
+              <span className="line-through text-slate-400 mr-2 text-base">
                 ₹{product.price}
               </span>
               ₹{product.discountPrice}
@@ -145,19 +140,27 @@ const ProductDetail = () => {
 
         <p className="text-sm">
           <strong>Status:</strong>{" "}
-          {product.stockStatus === "in_stock"
-            ? "In Stock"
-            : "Out of Stock"}
+          <span
+            className={
+              product.stockStatus === "in_stock"
+                ? "text-green-600"
+                : "text-red-500"
+            }
+          >
+            {product.stockStatus === "in_stock"
+              ? "In Stock"
+              : "Out of Stock"}
+          </span>
         </p>
 
         {/* QTY */}
         {product.stockStatus === "in_stock" && (
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium">Qty:</label>
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium">Qty</label>
             <select
               value={qty}
               onChange={(e) => setQty(Number(e.target.value))}
-              className="border border-slate-300 dark:border-slate-700 bg-transparent px-2 py-1 rounded-md"
+              className="border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-1.5 rounded-md"
             >
               {[...Array(Math.min(product.stockQuantity, 10)).keys()].map(
                 (x) => (
@@ -174,18 +177,18 @@ const ProductDetail = () => {
         <button
           disabled={product.stockStatus !== "in_stock"}
           onClick={() => addToCart(product, qty)}
-          className={`mt-4 w-fit flex items-center gap-2 px-6 py-2 rounded-md font-medium transition
+          className={`mt-3 flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition
             ${
               product.stockStatus === "in_stock"
                 ? "bg-black text-white hover:opacity-80 dark:bg-white dark:text-black"
                 : "bg-slate-300 text-slate-600 cursor-not-allowed"
             }`}
         >
-          <ShoppingCart size={16} />
+          <ShoppingCart size={18} />
           Add To Cart
         </button>
 
-        <hr className="my-6 border-slate-200 dark:border-slate-800" />
+        <hr className="border-slate-200 dark:border-slate-800" />
 
         {/* SPECIFICATIONS */}
         <div>

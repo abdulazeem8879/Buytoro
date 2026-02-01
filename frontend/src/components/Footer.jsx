@@ -4,18 +4,33 @@ import { Facebook, Instagram, Twitter, Linkedin, Check } from "lucide-react";
 const Footer = () => {
   return (
     <footer className="mt-16 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-black text-slate-600 dark:text-slate-400">
-      
+
       {/* ===== TOP SECTION ===== */}
       <div className="max-w-7xl mx-auto px-6 py-14 grid gap-10 sm:grid-cols-2 md:grid-cols-4">
 
         {/* BRAND */}
         <div className="space-y-3">
-          <h3 className="text-2xl font-semibold text-black dark:text-white">
-            BuyToro
-          </h3>
+          <Link
+  to="/"
+  className="
+    inline-block text-3xl font-extrabold tracking-tight
+    bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-500
+    bg-clip-text text-transparent
+
+    hover:from-pink-500 hover:via-purple-500 hover:to-indigo-600
+    hover:tracking-wide
+
+    transition-all duration-300 ease-out
+  "
+>
+  BuyToro
+</Link>
+
+
           <p className="text-sm">
             A premium watch e-commerce platform.
           </p>
+
           <p className="text-sm">
             Designed & Developed by{" "}
             <span className="font-medium text-black dark:text-white">
@@ -29,19 +44,25 @@ const Footer = () => {
           <h4 className="text-sm font-semibold uppercase tracking-wide text-black dark:text-white">
             Quick Links
           </h4>
+
           <nav className="flex flex-col gap-2 text-sm">
-            <Link to="/" className="hover:text-black dark:hover:text-white transition">
-              Home
-            </Link>
-            <Link to="/cart" className="hover:text-black dark:hover:text-white transition">
-              Cart
-            </Link>
-            <Link to="/profile" className="hover:text-black dark:hover:text-white transition">
-              Profile
-            </Link>
-            <Link to="/contact" className="hover:text-black dark:hover:text-white transition">
-              Contact
-            </Link>
+            {[
+              { name: "Home", to: "/" },
+              { name: "Cart", to: "/cart" },
+              { name: "Profile", to: "/profile" },
+              { name: "Contact", to: "/contact" },
+            ].map((item) => (
+              <Link
+                key={item.name}
+                to={item.to}
+                className="w-fit
+                           hover:text-indigo-600 dark:hover:text-indigo-400
+                           hover:translate-x-1
+                           transition-all duration-200"
+              >
+                {item.name}
+              </Link>
+            ))}
           </nav>
         </div>
 
@@ -50,13 +71,23 @@ const Footer = () => {
           <h4 className="text-sm font-semibold uppercase tracking-wide text-black dark:text-white">
             Legal
           </h4>
+
           <nav className="flex flex-col gap-2 text-sm">
-            <Link to="/terms" className="hover:text-black dark:hover:text-white transition">
-              Terms & Conditions
-            </Link>
-            <Link to="/privacy" className="hover:text-black dark:hover:text-white transition">
-              Privacy Policy
-            </Link>
+            {[
+              { name: "Terms & Conditions", to: "/terms" },
+              { name: "Privacy Policy", to: "/privacy" },
+            ].map((item) => (
+              <Link
+                key={item.name}
+                to={item.to}
+                className="w-fit
+                           hover:text-indigo-600 dark:hover:text-indigo-400
+                           hover:translate-x-1
+                           transition-all duration-200"
+              >
+                {item.name}
+              </Link>
+            ))}
           </nav>
         </div>
 
@@ -68,15 +99,15 @@ const Footer = () => {
 
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">
-              <Check size={14} />
+              <Check size={14} className="text-emerald-500" />
               100% Original Products
             </li>
             <li className="flex items-center gap-2">
-              <Check size={14} />
+              <Check size={14} className="text-emerald-500" />
               Secure Payments
             </li>
             <li className="flex items-center gap-2">
-              <Check size={14} />
+              <Check size={14} className="text-emerald-500" />
               Fast Delivery
             </li>
           </ul>
@@ -85,29 +116,40 @@ const Footer = () => {
           <div className="flex gap-4 pt-3">
             <a
               href="#"
-              className="hover:text-black dark:hover:text-white transition"
               aria-label="Facebook"
+              className="hover:text-blue-600 dark:hover:text-blue-400
+                         hover:-translate-y-1
+                         transition-all duration-200"
             >
               <Facebook size={18} />
             </a>
+
             <a
               href="#"
-              className="hover:text-black dark:hover:text-white transition"
               aria-label="Instagram"
+              className="hover:text-pink-500
+                         hover:-translate-y-1
+                         transition-all duration-200"
             >
               <Instagram size={18} />
             </a>
+
             <a
               href="#"
-              className="hover:text-black dark:hover:text-white transition"
               aria-label="Twitter"
+              className="hover:text-sky-500
+                         hover:-translate-y-1
+                         transition-all duration-200"
             >
               <Twitter size={18} />
             </a>
+
             <a
               href="#"
-              className="hover:text-black dark:hover:text-white transition"
               aria-label="LinkedIn"
+              className="hover:text-blue-700 dark:hover:text-blue-400
+                         hover:-translate-y-1
+                         transition-all duration-200"
             >
               <Linkedin size={18} />
             </a>

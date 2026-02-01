@@ -60,17 +60,27 @@ const Products = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh] text-lg font-medium">
+      <div className="flex justify-center items-center min-h-[60vh] text-lg font-medium text-black dark:text-white">
         Loading products...
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-12 gap-8">
+    <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-12 gap-8 text-black dark:text-white">
+      
       {/* ===== SIDEBAR ===== */}
-      <aside className="col-span-12 md:col-span-3 bg-white rounded-2xl shadow p-6 space-y-6 sticky top-6 h-fit">
-        <h2 className="text-xl font-bold border-b pb-3">
+      <aside
+        className="
+          col-span-12 md:col-span-3
+          bg-white dark:bg-gray-900
+          border border-slate-200 dark:border-slate-700
+          rounded-2xl shadow
+          p-6 space-y-6
+          sticky top-6 h-fit
+        "
+      >
+        <h2 className="text-xl font-bold border-b border-slate-200 dark:border-slate-700 pb-3">
           Filters
         </h2>
 
@@ -86,8 +96,8 @@ const Products = () => {
               className={`w-full text-left px-4 py-2 rounded-lg text-sm transition
                 ${
                   filters.category === cat
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
+                    ? "bg-black text-white dark:bg-white dark:text-black"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
             >
               {cat}
@@ -107,8 +117,8 @@ const Products = () => {
               className={`w-full text-left px-4 py-2 rounded-lg text-sm transition
                 ${
                   filters.gender === g
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
+                    ? "bg-black text-white dark:bg-white dark:text-black"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
             >
               {g}
@@ -120,7 +130,13 @@ const Products = () => {
         <div>
           <h3 className="font-semibold mb-3">Brand</h3>
           <select
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+            className="
+              w-full border rounded-lg px-3 py-2 text-sm
+              bg-white dark:bg-gray-800
+              border-slate-300 dark:border-slate-600
+              text-black dark:text-white
+              focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white
+            "
             value={filters.brand}
             onChange={(e) =>
               setFilters({ ...filters, brand: e.target.value })
@@ -152,8 +168,8 @@ const Products = () => {
               className={`w-full text-left px-4 py-2 rounded-lg text-sm transition
                 ${
                   filters.price === p.value
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
+                    ? "bg-black text-white dark:bg-white dark:text-black"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
             >
               {p.label}
@@ -169,7 +185,7 @@ const Products = () => {
         </h1>
 
         {filteredProducts.length === 0 && (
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             No products found
           </p>
         )}
@@ -178,10 +194,18 @@ const Products = () => {
           {filteredProducts.map((product) => (
             <div
               key={product._id}
-              className="bg-white rounded-2xl p-4 text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="
+                bg-white dark:bg-gray-900
+                text-black dark:text-white
+                rounded-2xl p-4 text-center
+                border border-slate-200 dark:border-slate-700
+                transition-all duration-300
+                hover:-translate-y-1
+                hover:shadow-xl dark:hover:shadow-black/40
+              "
             >
               <Link to={`/product/${product._id}`}>
-                <div className="bg-gray-100 rounded-xl h-[190px] flex items-center justify-center overflow-hidden">
+                <div className="bg-gray-100 dark:bg-gray-800 rounded-xl h-[190px] flex items-center justify-center overflow-hidden">
                   <img
                     src={product.images?.[0]?.url}
                     alt={product.productName}
@@ -197,7 +221,7 @@ const Products = () => {
               <p className="mt-1 text-sm">
                 {product.discountPrice > 0 ? (
                   <>
-                    <span className="line-through text-gray-400 mr-2">
+                    <span className="line-through text-gray-400 dark:text-gray-500 mr-2">
                       ₹{product.price}
                     </span>
                     <span className="font-bold">
@@ -217,10 +241,10 @@ const Products = () => {
                   addToCart(product, 1);
                   showAlert("Product added to cart", "success");
                 }}
-                className={`mt-3 w-full py-2 rounded-lg text-sm text-white transition
+                className={`mt-3 w-full py-2 rounded-lg text-sm transition
                   ${
                     product.stockStatus === "in_stock"
-                      ? "bg-black hover:bg-gray-800"
+                      ? "bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                       : "bg-gray-400 cursor-not-allowed"
                   }`}
               >
@@ -231,7 +255,7 @@ const Products = () => {
 
               <Link
                 to={`/product/${product._id}`}
-                className="inline-block mt-3 text-sm font-semibold hover:underline"
+                className="inline-block mt-3 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:underline"
               >
                 View Details →
               </Link>

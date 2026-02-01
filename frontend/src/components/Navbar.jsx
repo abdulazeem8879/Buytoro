@@ -51,20 +51,45 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 h-16 bg-white dark:bg-black border-b border-slate-200 dark:border-slate-800">
+      <nav className="sticky top-0 z-50 h-16 bg-white dark:bg-black
+           border-b border-slate-200 dark:border-slate-800
+           shadow-lg dark:shadow-lg"
+>
         <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
 
           {/* LEFT */}
           <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight text-black dark:text-white">
-                BuyToro
-              </h1>
-            </Link>
+           <Link to="/" className="flex items-center gap-2">
+<h1
+  className="
+    text-2xl font-extrabold tracking-tight
+    bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-500
+    bg-clip-text text-transparent
 
-            <div className="hidden sm:flex items-center justify-center w-12 h-12">
-              <AnalogWatch />
-            </div>
+    transition-all duration-200
+    hover:drop-shadow-[0_2px_2px_rgba(0,0,0,0.45)]
+    dark:hover:drop-shadow-[0_1px_1px_rgba(255,255,255,0.25)]
+  "
+>
+  BuyToro
+</h1>
+
+
+
+</Link>
+
+
+          <div className="
+  hidden sm:flex items-center justify-center
+  w-14 h-14
+  rounded-full
+  bg-white dark:bg-black
+  shadow-md
+  ring-1 ring-slate-200 dark:ring-slate-700
+">
+  <AnalogWatch />
+</div>
+
           </div>
 
           {/* SEARCH */}
