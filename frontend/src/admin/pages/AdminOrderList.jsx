@@ -90,19 +90,20 @@ const AdminOrderList = () => {
     }
   };
 
-  if (loading) return <p className="p-6">Loading orders...</p>;
+  if (loading)
+    return <p className="p-6">Loading orders...</p>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">
+    <div className="p-6 space-y-6 overflow-x-hidden">
+      <h1 className="text-2xl font-bold">
         Orders
       </h1>
 
       {/* FILTER BAR */}
-      <div className="flex flex-wrap gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-4">
         <input
           placeholder="Search order / user / email / date"
-          className={`${inputClass} w-64`}
+          className={`${inputClass} w-full sm:w-64`}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -128,8 +129,8 @@ const AdminOrderList = () => {
         </select>
       </div>
 
-      {/* TABLE */}
-      <div className="overflow-x-auto bg-white dark:bg-gray-900 rounded-xl shadow border dark:border-gray-800">
+      {/* DESKTOP TABLE */}
+      <div className="hidden md:block overflow-x-auto bg-white dark:bg-gray-900 rounded-xl shadow border dark:border-gray-800">
         <table className="w-full text-sm">
           <thead className="bg-gray-100 dark:bg-gray-800">
             <tr>
@@ -211,6 +212,72 @@ const AdminOrderList = () => {
 
         {filteredOrders.length === 0 && (
           <p className="p-6 text-center text-gray-500">
+            No orders found
+          </p>
+        )}
+      </div>
+
+      {/* MOBILE CARDS */}
+      <div className="md:hidden space-y-4">
+        {filteredOrders.map((o) => (
+          <div
+            key={o._id}
+            className="bg-white dark:bg-gray-900 rounded-xl shadow border dark:border-gray-800 p-4"
+          >
+            <p className="text-xs text-gray-500">
+              Order ID
+            </p>
+            <p className="font-mono text-xs break-all">
+              {o._id}
+            </p>
+
+            <p className="mt-2 text-sm">
+              <strong>User:</strong>{" "}
+              {o.user?.name} ({o.user?.email})
+            </p>
+
+            <p className="text-sm">
+              <strong>Total:</strong> ₹{o.totalPrice}
+            </p>
+
+            <p className="text-sm mt-1">
+              <strong>Status:</strong>{" "}
+              {o.isCancelled
+                ? "Cancelled"
+                : o.isDelivered
+                ? "Delivered"
+                : "Pending"}
+            </p>
+
+            <div className="flex flex-wrap gap-4 mt-3 text-sm">
+              <Link
+                to={`/order/${o._id}`}
+                className="text-blue-600 hover:underline"
+              >
+                View
+              </Link>
+
+              {!o.isDelivered && !o.isCancelled && (
+                <button
+                  onClick={() => cancelOrder(o._id)}
+                  className="text-orange-600 hover:underline"
+                >
+                  Cancel
+                </button>
+              )}
+
+              <button
+                onClick={() => deleteOrder(o._id)}
+                className="text-red-600 hover:underline"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {filteredOrders.length === 0 && (
+          <p className="text-center text-gray-500">
             No orders found
           </p>
         )}

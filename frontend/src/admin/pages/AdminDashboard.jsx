@@ -39,9 +39,7 @@ const AdminDashboard = () => {
         );
 
         const paidOrders = orders.filter((o) => o.isPaid);
-        const deliveredOrders = orders.filter(
-          (o) => o.isDelivered
-        );
+        const deliveredOrders = orders.filter((o) => o.isDelivered);
 
         const revenue = paidOrders.reduce(
           (acc, order) => acc + order.totalPrice,
@@ -83,139 +81,151 @@ const AdminDashboard = () => {
     );
 
   return (
-    <div className="space-y-10">
-      <h1 className="text-3xl font-bold">
+    <div className="space-y-8 overflow-x-hidden">
+      <h1 className="text-2xl sm:text-3xl font-bold">
         Admin Dashboard
       </h1>
 
       {/* TOP STATS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow text-center">
-          <p className="text-sm text-gray-500">
-            Total Products
-          </p>
-          <p className="text-2xl font-bold">
-            {stats.products}
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow text-center">
-          <p className="text-sm text-gray-500">
-            Total Orders
-          </p>
-          <p className="text-2xl font-bold">
-            {stats.orders}
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow text-center">
-          <p className="text-sm text-gray-500">
-            Total Users
-          </p>
-          <p className="text-2xl font-bold">
-            {stats.users}
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow text-center">
-          <p className="text-sm text-gray-500">
-            Revenue
-          </p>
-          <p className="text-2xl font-bold text-green-600">
-            ₹{stats.revenue}
-          </p>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "Total Products", value: stats.products },
+          { label: "Total Orders", value: stats.orders },
+          { label: "Total Users", value: stats.users },
+          {
+            label: "Revenue",
+            value: `₹${stats.revenue}`,
+            highlight: true,
+          },
+        ].map((item, idx) => (
+          <div
+            key={idx}
+            className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow text-center"
+          >
+            <p className="text-sm text-gray-500">
+              {item.label}
+            </p>
+            <p
+              className={`text-2xl font-bold ${
+                item.highlight
+                  ? "text-green-600"
+                  : ""
+              }`}
+            >
+              {item.value}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* ORDER STATUS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-xl text-center">
-          <p className="text-sm">Paid Orders</p>
-          <p className="text-xl font-semibold">
-            {stats.paidOrders}
-          </p>
-        </div>
-
-        <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-xl text-center">
-          <p className="text-sm">Unpaid Orders</p>
-          <p className="text-xl font-semibold">
-            {stats.unpaidOrders}
-          </p>
-        </div>
-
-        <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-xl text-center">
-          <p className="text-sm">
-            Delivered Orders
-          </p>
-          <p className="text-xl font-semibold">
-            {stats.deliveredOrders}
-          </p>
-        </div>
-
-        <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-xl text-center">
-          <p className="text-sm">
-            Pending Delivery
-          </p>
-          <p className="text-xl font-semibold">
-            {stats.pendingDelivery}
-          </p>
-        </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {[
+          { label: "Paid Orders", value: stats.paidOrders },
+          { label: "Unpaid Orders", value: stats.unpaidOrders },
+          { label: "Delivered", value: stats.deliveredOrders },
+          { label: "Pending", value: stats.pendingDelivery },
+        ].map((item, idx) => (
+          <div
+            key={idx}
+            className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-center"
+          >
+            <p className="text-xs sm:text-sm">
+              {item.label}
+            </p>
+            <p className="text-lg font-semibold">
+              {item.value}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* RECENT ORDERS */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow overflow-x-auto">
-        <h2 className="text-xl font-semibold p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow">
+        <h2 className="text-lg sm:text-xl font-semibold p-5">
           Recent Orders
         </h2>
 
-        <table className="w-full text-sm">
-          <thead className="bg-gray-100 dark:bg-gray-800">
-            <tr>
-              <th className="p-3 text-left">
-                Order ID
-              </th>
-              <th className="p-3 text-left">
-                User
-              </th>
-              <th className="p-3 text-left">
-                Amount
-              </th>
-              <th className="p-3 text-center">
-                Paid
-              </th>
-              <th className="p-3 text-center">
-                Delivered
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {recentOrders.map((order) => (
-              <tr
-                key={order._id}
-                className="border-t dark:border-gray-700"
-              >
-                <td className="p-3">
-                  {order._id}
-                </td>
-                <td className="p-3">
-                  {order.user?.email || "N/A"}
-                </td>
-                <td className="p-3">
-                  ₹{order.totalPrice}
-                </td>
-                <td className="p-3 text-center">
-                  {order.isPaid ? "Yes" : "No"}
-                </td>
-                <td className="p-3 text-center">
-                  {order.isDelivered
-                    ? "Yes"
-                    : "No"}
-                </td>
+        {/* DESKTOP TABLE */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-100 dark:bg-gray-800">
+              <tr>
+                <th className="p-3 text-left">Order ID</th>
+                <th className="p-3 text-left">User</th>
+                <th className="p-3 text-left">Amount</th>
+                <th className="p-3 text-center">Paid</th>
+                <th className="p-3 text-center">Delivered</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {recentOrders.map((order) => (
+                <tr
+                  key={order._id}
+                  className="border-t dark:border-gray-700"
+                >
+                  <td className="p-3">{order._id}</td>
+                  <td className="p-3">
+                    {order.user?.email || "N/A"}
+                  </td>
+                  <td className="p-3">
+                    ₹{order.totalPrice}
+                  </td>
+                  <td className="p-3 text-center">
+                    {order.isPaid ? "Yes" : "No"}
+                  </td>
+                  <td className="p-3 text-center">
+                    {order.isDelivered
+                      ? "Yes"
+                      : "No"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* MOBILE CARDS */}
+        <div className="md:hidden space-y-4 p-4">
+          {recentOrders.map((order) => (
+            <div
+              key={order._id}
+              className="border rounded-lg p-4 dark:border-gray-700"
+            >
+              <p className="text-xs text-gray-500">
+                Order ID
+              </p>
+              <p className="font-mono text-sm break-all">
+                {order._id}
+              </p>
+
+              <p className="mt-2 text-sm">
+                <span className="font-semibold">
+                  User:
+                </span>{" "}
+                {order.user?.email || "N/A"}
+              </p>
+
+              <p className="text-sm">
+                <span className="font-semibold">
+                  Amount:
+                </span>{" "}
+                ₹{order.totalPrice}
+              </p>
+
+              <div className="flex gap-4 mt-2 text-sm">
+                <span>
+                  <strong>Paid:</strong>{" "}
+                  {order.isPaid ? "Yes" : "No"}
+                </span>
+                <span>
+                  <strong>Delivered:</strong>{" "}
+                  {order.isDelivered ? "Yes" : "No"}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

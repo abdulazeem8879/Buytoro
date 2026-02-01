@@ -5,9 +5,10 @@ import {
   Package,
   ShoppingCart,
   Users,
+  X,
 } from "lucide-react";
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
 
   const menu = [
@@ -35,15 +36,29 @@ const AdminSidebar = () => {
 
   return (
     <aside
-      className="
-        w-64 min-h-screen
+      className={`
+        fixed md:static z-40
+        top-0 left-0
+        h-screen w-64
         bg-white dark:bg-gray-900
         text-gray-800 dark:text-gray-100
         p-6
         border-r border-gray-200 dark:border-gray-800
-        transition-colors duration-300
-      "
+        transform transition-transform duration-300
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0
+      `}
     >
+      {/* MOBILE CLOSE BUTTON */}
+      <div className="md:hidden flex justify-end mb-4">
+        <button
+          onClick={onClose}
+          className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800"
+        >
+          <X size={20} />
+        </button>
+      </div>
+
       {/* Logo / Title */}
       <h2 className="text-2xl font-bold mb-10 text-center tracking-wide">
         🛠 Admin Panel
@@ -58,6 +73,7 @@ const AdminSidebar = () => {
             <Link
               key={item.name}
               to={item.path}
+              onClick={onClose} // mobile pe click ke baad close
               className={`
                 flex items-center gap-3 px-4 py-2.5 rounded-lg
                 transition-all duration-200
