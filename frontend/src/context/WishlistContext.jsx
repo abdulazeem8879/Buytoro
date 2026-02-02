@@ -1,54 +1,39 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import api from "../services/api";
-import { AuthContext } from "./AuthContext";
+import { createContext, useEffect, useState } from "react";
 
 export const WishlistContext = createContext();
 
 const WishlistProvider = ({ children }) => {
-  const { user } = useContext(AuthContext);
+  const [wishlist, setWishlist] = useState(() => {
+    const stored = localStorage.getItem("wishlist");
+    return stored ? JSON.parse(stored) : [];
+  });
 
-  const [wishlist, setWishlist] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  // 🔁 Fetch wishlist when user logs in
   useEffect(() => {
-    if (user) {
-      fetchWishlist();
-    } else {
-      setWishlist([]);
-    }
-  }, [user]);
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }, [wishlist]);
 
-  const fetchWishlist = async () => {
-    try {
-      setLoading(true);
-      const { data } = await api.get("/users/wishlist");
-      setWishlist(data);
-    } catch (err) {
-      console.error("Failed to load wishlist");
-    } finally {
-      setLoading(false);
-    }
+  // ❤️ ADD
+  const addToWishlist = (productId) => {
+    setWishlist((prev) =>
+      prev.includes(productId)
+        ? prev
+        : [...prev, productId]
+    );
   };
 
-  // ❤️ Toggle wishlist (add / remove)
-  const toggleWishlist = async (productId) => {
-    try {
-      const { data } = await api.post(
-        `/users/wishlist/${productId}`
-      );
-      setWishlist(data.wishlist);
-    } catch (err) {
-      console.error("Wishlist toggle failed");
-    }
+  // ❌ REMOVE
+  const removeFromWishlist = (productId) => {
+    setWishlist((prev) =>
+      prev.filter((id) => id !== productId)
+    );
   };
 
-  // ✅ Check if product is in wishlist
-  const isInWishlist = (productId) => {
-    return wishlist.some(
-      (p) =>
-        p._id === productId ||
-        p.toString() === productId
+  // 🔁 TOGGLE (BEST)
+  const toggleWishlist = (productId) => {
+    setWishlist((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
     );
   };
 
@@ -56,9 +41,9 @@ const WishlistProvider = ({ children }) => {
     <WishlistContext.Provider
       value={{
         wishlist,
-        loading,
+        addToWishlist,
+        removeFromWishlist,
         toggleWishlist,
-        isInWishlist,
       }}
     >
       {children}

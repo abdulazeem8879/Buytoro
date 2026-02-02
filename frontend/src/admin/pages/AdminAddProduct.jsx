@@ -129,9 +129,9 @@ const AdminAddProduct = () => {
         {/* BASIC */}
         <div className={sectionClass}>
           <h2 className="font-semibold">Basic Info</h2>
-          <input className={inputClass} placeholder="Product Name" required onChange={(e)=>setProductName(e.target.value)} />
-          <input className={inputClass} placeholder="Brand Name" required onChange={(e)=>setBrandName(e.target.value)} />
-          <input className={inputClass} placeholder="Category" required onChange={(e)=>setCategory(e.target.value)} />
+          <input className={inputClass} placeholder="Product Name"  onChange={(e)=>setProductName(e.target.value)} />
+          <input className={inputClass} placeholder="Brand Name"  onChange={(e)=>setBrandName(e.target.value)} />
+          <input className={inputClass} placeholder="Category"  onChange={(e)=>setCategory(e.target.value)} />
           <textarea className={inputClass} placeholder="Short Description" />
           <textarea rows="4" className={inputClass} placeholder="Full Description" />
         </div>
@@ -139,9 +139,9 @@ const AdminAddProduct = () => {
         {/* PRICE */}
         <div className={sectionClass}>
           <h2 className="font-semibold">Price & Stock</h2>
-          <input type="number" className={inputClass} placeholder="Price" required onChange={(e)=>setPrice(e.target.value)} />
+          <input type="number" className={inputClass} placeholder="Price"  onChange={(e)=>setPrice(e.target.value)} />
           <input type="number" className={inputClass} placeholder="Discount Price" onChange={(e)=>setDiscountPrice(e.target.value)} />
-          <input type="number" className={inputClass} placeholder="Stock Quantity" required onChange={(e)=>setStockQuantity(e.target.value)} />
+          <input type="number" className={inputClass} placeholder="Stock Quantity"  onChange={(e)=>setStockQuantity(e.target.value)} />
           <select className={inputClass} onChange={(e)=>setStockStatus(e.target.value)}>
             <option value="in_stock">In Stock</option>
             <option value="out_of_stock">Out of Stock</option>

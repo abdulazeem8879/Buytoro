@@ -4,10 +4,10 @@ import { AuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
-import { Heart } from "lucide-react";
+import { Heart, X } from "lucide-react";
 
 const Wishlist = () => {
-  const { wishlist } = useContext(WishlistContext);
+  const { wishlist, removeFromWishlist } = useContext(WishlistContext);
   const { user } = useContext(AuthContext);
 
   const [products, setProducts] = useState([]);
@@ -15,20 +15,25 @@ const Wishlist = () => {
 
   useEffect(() => {
     const fetchWishlistProducts = async () => {
+      setLoading(true);
+
       try {
+        // ✅ EMPTY WISHLIST CASE
         if (!wishlist || wishlist.length === 0) {
           setProducts([]);
+          setLoading(false);
           return;
         }
 
-        // backend se wishlist products lao
-        const { data } = await api.post("/products/id", {
+        // ✅ FETCH PRODUCTS BY IDS
+        const { data } = await api.post("/products/by-ids", {
           ids: wishlist,
         });
 
-        setProducts(data);
+        setProducts(data || []);
       } catch (err) {
-        console.error("Failed to load wishlist");
+        console.error("Failed to load wishlist", err);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -37,6 +42,7 @@ const Wishlist = () => {
     fetchWishlistProducts();
   }, [wishlist]);
 
+  // 🔒 NOT LOGGED IN
   if (!user) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-center">
@@ -54,6 +60,7 @@ const Wishlist = () => {
     );
   }
 
+  // ⏳ LOADING
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -68,6 +75,7 @@ const Wishlist = () => {
         My Wishlist
       </h1>
 
+      {/* ❤️ EMPTY */}
       {products.length === 0 ? (
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-10 text-center">
           <Heart size={48} className="mx-auto text-gray-400 mb-4" />
@@ -83,9 +91,29 @@ const Wishlist = () => {
           </Link>
         </div>
       ) : (
+        /* 🧱 PRODUCTS */
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <ProductCard key={product._id} product={product} />
+            <div key={product._id} className="relative">
+              {/* ❌ REMOVE BUTTON */}
+              <button
+                onClick={() => removeFromWishlist(product._id)}
+                className="
+                  absolute top-3 right-3 z-10
+                  bg-white dark:bg-gray-900
+                  border border-gray-300 dark:border-gray-700
+                  rounded-full p-1.5
+                  text-gray-600 dark:text-gray-300
+                  hover:bg-red-500 hover:text-white
+                  transition
+                "
+                title="Remove from wishlist"
+              >
+                <X size={14} />
+              </button>
+
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
       )}

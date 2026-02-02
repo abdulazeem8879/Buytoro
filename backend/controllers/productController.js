@@ -207,3 +207,25 @@ export const deleteProduct = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getProductsByIds = async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    if (!ids || !Array.isArray(ids)) {
+      return res.status(400).json({
+        message: "Product IDs array required",
+      });
+    }
+
+    const products = await Product.find({
+      _id: { $in: ids },
+    });
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch wishlist products",
+    });
+  }
+};

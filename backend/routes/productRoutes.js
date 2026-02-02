@@ -5,6 +5,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductsByIds,
 } from "../controllers/productController.js";
 
 import { uploadProductMedia } from "../middlewares/uploadMiddleware.js";
@@ -15,6 +16,8 @@ const productRouter = express.Router();
 // 🔓 PUBLIC
 productRouter.get("/", getAllProducts);
 productRouter.get("/:id", getProductById);
+productRouter.post("/by-ids", getProductsByIds);
+
 
 // 🔐 ADMIN ONLY
 productRouter.post(
