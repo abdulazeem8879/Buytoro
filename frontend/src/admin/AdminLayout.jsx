@@ -1,7 +1,12 @@
+
+
+
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Menu } from "lucide-react";
+
 import AdminSidebar from "./components/AdminSidebar";
+import AdminHeader from "./components/AdminHeader";
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -29,19 +34,9 @@ const AdminLayout = () => {
 
       {/* RIGHT SIDE */}
       <div className="flex-1 flex flex-col">
-        {/* TOP BAR (MOBILE ONLY) */}
-        <div className="md:hidden flex items-center gap-3 p-4 border-b border-gray-200 dark:border-gray-800">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800"
-          >
-            <Menu size={22} />
-          </button>
-
-          <h1 className="font-semibold text-lg">
-            Admin Dashboard
-          </h1>
-        </div>
+        
+        {/* ADMIN HEADER (DESKTOP + MOBILE) */}
+        <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
 
         {/* PAGE CONTENT */}
         <div className="flex-1 p-6">

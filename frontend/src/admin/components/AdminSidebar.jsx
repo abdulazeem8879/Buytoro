@@ -1,15 +1,23 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
   ShoppingCart,
   Users,
   X,
+  ArrowLeft,
+  LogOut,
 } from "lucide-react";
-
+import { AuthContext } from "../../context/AuthContext";
 const AdminSidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+ const { logout } = useContext(AuthContext);
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const menu = [
     {
@@ -47,9 +55,10 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         transform transition-transform duration-300
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         md:translate-x-0
+        flex flex-col
       `}
     >
-      {/* MOBILE CLOSE BUTTON */}
+      {/* MOBILE CLOSE */}
       <div className="md:hidden flex justify-end mb-4">
         <button
           onClick={onClose}
@@ -59,13 +68,13 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         </button>
       </div>
 
-      {/* Logo / Title */}
+      {/* TITLE */}
       <h2 className="text-2xl font-bold mb-10 text-center tracking-wide">
         🛠 Admin Panel
       </h2>
 
-      {/* Navigation */}
-      <nav className="space-y-2">
+      {/* NAV LINKS */}
+      <nav className="space-y-2 flex-1">
         {menu.map((item) => {
           const isActive = location.pathname === item.path;
 
@@ -73,7 +82,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
             <Link
               key={item.name}
               to={item.path}
-              onClick={onClose} // mobile pe click ke baad close
+              onClick={onClose}
               className={`
                 flex items-center gap-3 px-4 py-2.5 rounded-lg
                 transition-all duration-200
@@ -85,13 +94,36 @@ const AdminSidebar = ({ isOpen, onClose }) => {
               `}
             >
               {item.icon}
-              <span className="font-medium">
-                {item.name}
-              </span>
+              <span className="font-medium">{item.name}</span>
             </Link>
           );
         })}
       </nav>
+
+      {/* BOTTOM ACTIONS */}
+      <div className="pt-4 border-t border-gray-200 dark:border-gray-800 space-y-2">
+        {/* BACK TO STORE */}
+        <Link
+          to="/"
+          onClick={onClose}
+          className="flex items-center gap-3 px-4 py-2 text-sm
+          text-gray-600 dark:text-gray-300
+          hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+        >
+          <ArrowLeft size={18} />
+          Back to Store
+        </Link>
+
+        {/* LOGOUT */}
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-2 text-sm
+          text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+        >
+          <LogOut size={18} />
+          Logout
+        </button>
+      </div>
     </aside>
   );
 };
