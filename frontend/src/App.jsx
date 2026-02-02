@@ -38,6 +38,7 @@ import AdminUsers from "./admin/pages/AdminUsers";
 
 // 🔥 THEME CONTEXT (NEXT STEP ME FILE AAYEGI)
 import { ThemeProvider } from "./context/ThemeContext";
+import Wishlist from "./pages/Wishlist";
 
 const App = () => {
   return (
@@ -60,6 +61,15 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+
+             <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute>
+                <Wishlist />
               </ProtectedRoute>
             }
           />

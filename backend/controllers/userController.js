@@ -203,3 +203,49 @@ export const getAllUsers = async (req, res, next) => {
     next(error);
   }
 };
+
+
+
+export const toggleWishlist = async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const { productId } = req.params;
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const alreadyExists = user.wishlist.includes(productId);
+
+  if (alreadyExists) {
+    // remove
+    user.wishlist = user.wishlist.filter(
+      (id) => id.toString() !== productId
+    );
+  } else {
+    // add
+    user.wishlist.push(productId);
+  }
+
+  await user.save();
+
+  res.json({
+    wishlist: user.wishlist,
+    message: alreadyExists
+      ? "Removed from wishlist"
+      : "Added to wishlist",
+  });
+};
+
+
+
+
+export const getWishlist = async (req, res) => {
+  const user = await User.findById(req.user._id).populate("wishlist");
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.json(user.wishlist);
+};
+

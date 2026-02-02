@@ -6,6 +6,9 @@ import {
   updateUserProfile,
   changePassword,
   getAllUsers,
+  getWishlist,
+  toggleWishlist,
+
 } from "../controllers/userController.js";
 
 import { protect, admin } from "../middlewares/authMiddleware.js";
@@ -36,6 +39,10 @@ userRouter.put(
 
 // CHANGE PASSWORD
 userRouter.put("/change-password", protect, changePassword);
+
+
+userRouter.post("/wishlist/:productId", protect, toggleWishlist);
+userRouter.get("/wishlist", protect, getWishlist);
 
 /* ===========================
    ADMIN

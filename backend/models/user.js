@@ -38,6 +38,14 @@ const userSchema = new mongoose.Schema(
       },
     },
 
+    // ❤️ Wishlist (Product IDs)
+    wishlist: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
+
     // 🟢 Account status
     isBlocked: {
       type: Boolean,
@@ -50,7 +58,7 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // createdAt & updatedAt
+    timestamps: true,
   }
 );
 

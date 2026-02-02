@@ -26,8 +26,7 @@ import {
   Button,
 } from "@mui/material";
 
-const DEFAULT_AVATAR =
-  "https://cdn-icons-png.flaticon.com/512/847/847969.png";
+const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
 const Profile = () => {
   const { user, logout } = useContext(AuthContext);
@@ -57,7 +56,7 @@ const Profile = () => {
     } catch (err) {
       showAlert(
         err.response?.data?.message || "Failed to delete account",
-        "error"
+        "error",
       );
     } finally {
       setOpenDeleteDialog(false);
@@ -68,7 +67,8 @@ const Profile = () => {
     <>
       <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-8">
         {/* ===== HEADER ===== */}
-        <div className="flex items-center gap-6 p-6 rounded-xl
+        <div
+          className="flex items-center gap-6 p-6 rounded-xl
           bg-white dark:bg-gray-900
           text-gray-900 dark:text-gray-100
           shadow"
@@ -82,11 +82,10 @@ const Profile = () => {
 
           <div>
             <h1 className="text-2xl font-bold">{user.name}</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              {user.email}
-            </p>
+            <p className="text-gray-600 dark:text-gray-400">{user.email}</p>
 
-            <span className="inline-block mt-2 px-3 py-1 text-sm rounded-full
+            <span
+              className="inline-block mt-2 px-3 py-1 text-sm rounded-full
               bg-green-100 text-green-700
               dark:bg-green-900 dark:text-green-300"
             >
@@ -98,9 +97,7 @@ const Profile = () => {
         {/* ===== INFO CARDS ===== */}
         <div className="grid md:grid-cols-2 gap-6">
           <div className="p-6 rounded-xl bg-white dark:bg-gray-900 shadow">
-            <h2 className="text-lg font-semibold mb-4">
-              Personal Information
-            </h2>
+            <h2 className="text-lg font-semibold mb-4">Personal Information</h2>
 
             <div className="space-y-3 text-gray-700 dark:text-gray-300">
               <p className="flex items-center gap-2">
@@ -110,16 +107,13 @@ const Profile = () => {
                 <Mail size={18} /> Email: {user.email}
               </p>
               <p className="flex items-center gap-2">
-                <Shield size={18} /> Role:{" "}
-                {user.isAdmin ? "Admin" : "User"}
+                <Shield size={18} /> Role: {user.isAdmin ? "Admin" : "User"}
               </p>
             </div>
           </div>
 
           <div className="p-6 rounded-xl bg-white dark:bg-gray-900 shadow">
-            <h2 className="text-lg font-semibold mb-4">
-              Account Information
-            </h2>
+            <h2 className="text-lg font-semibold mb-4">Account Information</h2>
 
             <div className="space-y-2 text-gray-700 dark:text-gray-300">
               <p>
@@ -139,79 +133,76 @@ const Profile = () => {
         </div>
 
         {/* ===== QUICK ACTIONS ===== */}
-   <div className="p-6 rounded-xl bg-white dark:bg-gray-900 shadow">
-  <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+        <div className="p-6 rounded-xl bg-white dark:bg-gray-900 shadow">
+          <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
 
-  <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-    {/* Home */}
-    <Link
-      to="/"
-      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            {/* Home */}
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
                  text-gray-700 dark:text-gray-300
                  hover:text-indigo-600 dark:hover:text-indigo-400
                  hover:bg-indigo-50 dark:hover:bg-indigo-950
                  transition-all duration-200"
-    >
-      <Home className="w-5 h-5" />
-      Home
-    </Link>
+            >
+              <Home className="w-5 h-5" />
+              Home
+            </Link>
 
-    {/* My Orders */}
-    <Link
-      to="/my-orders"
-      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+            {/* My Orders */}
+            <Link
+              to="/my-orders"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
                  text-gray-700 dark:text-gray-300
                  hover:text-emerald-600 dark:hover:text-emerald-400
                  hover:bg-emerald-50 dark:hover:bg-emerald-950
                  transition-all duration-200"
-    >
-      <Package className="w-5 h-5" />
-      My Orders
-    </Link>
+            >
+              <Package className="w-5 h-5" />
+              My Orders
+            </Link>
 
-    {/* Cart */}
-    <Link
-      to="/cart"
-      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+            {/* Cart */}
+            <Link
+              to="/cart"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
                  text-gray-700 dark:text-gray-300
                  hover:text-orange-600 dark:hover:text-orange-400
                  hover:bg-orange-50 dark:hover:bg-orange-950
                  transition-all duration-200"
-    >
-      <ShoppingCart className="w-5 h-5" />
-      Cart
-    </Link>
+            >
+              <ShoppingCart className="w-5 h-5" />
+              Cart
+            </Link>
 
-    {/* Favorites */}
-    <Link
-      to="/favorites"
-      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+            {/* Favorites */}
+            <Link
+              to="/wishlist"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
                  text-gray-700 dark:text-gray-300
                  hover:text-pink-600 dark:hover:text-pink-400
                  hover:bg-pink-50 dark:hover:bg-pink-950
                  transition-all duration-200"
-    >
-      <Heart className="w-5 h-5" />
-      Favorites
-    </Link>
+            >
+              <Heart className="w-5 h-5" />
+              Favorites
+            </Link>
 
-    {/* Help */}
-    <Link
-      to="/help"
-      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+            {/* Help */}
+            <Link
+              to="/help"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
                  text-gray-700 dark:text-gray-300
                  hover:text-sky-600 dark:hover:text-sky-400
                  hover:bg-sky-50 dark:hover:bg-sky-950
                  transition-all duration-200"
-    >
-      <HelpCircle className="w-5 h-5" />
-      Help
-    </Link>
-  </div>
-</div>
-
-
-
+            >
+              <HelpCircle className="w-5 h-5" />
+              Help
+            </Link>
+          </div>
+        </div>
 
         {/* ===== EDIT PROFILE ===== */}
         <div className="p-6 rounded-xl bg-white dark:bg-gray-900 shadow">
@@ -235,9 +226,7 @@ const Profile = () => {
 
         {/* ===== SECURITY ===== */}
         <div className="p-6 rounded-xl bg-white dark:bg-gray-900 shadow">
-          <h2 className="text-lg font-semibold mb-4">
-            Security & Control
-          </h2>
+          <h2 className="text-lg font-semibold mb-4">Security & Control</h2>
 
           <div className="flex gap-3 flex-wrap">
             <button
@@ -260,7 +249,10 @@ const Profile = () => {
       </div>
 
       {/* ===== DIALOGS ===== */}
-      <Dialog open={openLogoutDialog} onClose={() => setOpenLogoutDialog(false)}>
+      <Dialog
+        open={openLogoutDialog}
+        onClose={() => setOpenLogoutDialog(false)}
+      >
         <DialogTitle>Confirm Logout</DialogTitle>
         <DialogActions>
           <Button onClick={() => setOpenLogoutDialog(false)}>Cancel</Button>
@@ -270,14 +262,19 @@ const Profile = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+      >
         <DialogTitle>Delete Account</DialogTitle>
-        <DialogContent>
-          This action is permanent.
-        </DialogContent>
+        <DialogContent>This action is permanent.</DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDeleteDialog(false)}>Cancel</Button>
-          <Button color="error" variant="contained" onClick={handleDeleteAccount}>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={handleDeleteAccount}
+          >
             Delete
           </Button>
         </DialogActions>
