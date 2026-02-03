@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 import { useAlert } from "../context/AlertContext";
-import { Eye, PackageSearch } from "lucide-react";
+import { CircleX, Eye, PackageSearch } from "lucide-react";
 
 const MyOrders = () => {
   const { showAlert } = useAlert();
@@ -15,7 +15,13 @@ const MyOrders = () => {
     const fetchMyOrders = async () => {
       try {
         const { data } = await api.get("/orders/myorders");
-        setOrders(data);
+
+        // recent orders first
+        const sorted = [...data].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        setOrders(sorted);
       } catch (err) {
         showAlert(
           err.response?.data?.message || "Failed to load your orders",
@@ -51,6 +57,19 @@ const MyOrders = () => {
     } finally {
       setCancelLoading(null);
     }
+  };
+
+  const getPaidLabel = (order) => {
+    if (order.isPaid) return "Paid";
+    if (order.paymentMethod === "COD" && order.isDelivered)
+      return "Paid (COD)";
+    return "Unpaid";
+  };
+
+  const getStatusLabel = (order) => {
+    if (order.isCancelled) return "Cancelled";
+    if (order.isDelivered) return "Delivered";
+    return "Active";
   };
 
   if (loading) {
@@ -107,36 +126,25 @@ const MyOrders = () => {
                 </div>
 
                 <div className="flex flex-wrap gap-2 text-xs">
-                  <span
-                    className={`px-2 py-1 rounded-full font-semibold ${
-                      order.isPaid
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {order.isPaid ? "Paid" : "Unpaid"}
+                  <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold">
+                    {getPaidLabel(order)}
                   </span>
 
-                  <span
-                    className={`px-2 py-1 rounded-full font-semibold ${
-                      order.isDelivered
-                        ? "bg-green-100 text-green-700"
-                        : "bg-yellow-100 text-yellow-700"
-                    }`}
-                  >
+                  <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 font-semibold">
                     {order.isDelivered ? "Delivered" : "Pending"}
                   </span>
 
-                  <span
-                    className={`px-2 py-1 rounded-full font-semibold ${
-                      order.isCancelled
-                        ? "bg-gray-200 text-gray-700"
-                        : "bg-blue-100 text-blue-700"
-                    }`}
-                  >
-                    {order.isCancelled ? "Cancelled" : "Active"}
+                  <span className="px-2 py-1 rounded-full bg-gray-200 text-gray-700 font-semibold">
+                    {getStatusLabel(order)}
                   </span>
                 </div>
+
+                {order.isDelivered && order.deliveredAt && (
+                  <p className="text-xs text-gray-500">
+                    Delivered on{" "}
+                    {new Date(order.deliveredAt).toLocaleDateString()}
+                  </p>
+                )}
 
                 <div className="flex justify-between pt-2">
                   <Link
@@ -146,8 +154,7 @@ const MyOrders = () => {
                     View Details
                   </Link>
 
-                  {!order.isPaid &&
-                    !order.isDelivered &&
+                  {!order.isDelivered &&
                     !order.isCancelled && (
                       <button
                         onClick={() => cancelOrderHandler(order._id)}
@@ -192,17 +199,18 @@ const MyOrders = () => {
                       ₹{order.totalPrice}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      {order.isPaid ? "Paid" : "Unpaid"}
+                      {getPaidLabel(order)}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      {order.isDelivered
-                        ? "Delivered"
-                        : "Pending"}
+                      {order.isDelivered ? "Delivered" : "Pending"}
+                      {order.isDelivered && order.deliveredAt && (
+                        <div className="text-xs text-gray-500">
+                          {new Date(order.deliveredAt).toLocaleDateString()}
+                        </div>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      {order.isCancelled
-                        ? "Cancelled"
-                        : "Active"}
+                      {getStatusLabel(order)}
                     </td>
                     <td className="px-4 py-3 text-center space-x-3">
                       <Link
@@ -212,8 +220,7 @@ const MyOrders = () => {
                         <Eye />
                       </Link>
 
-                      {!order.isPaid &&
-                        !order.isDelivered &&
+                      {!order.isDelivered &&
                         !order.isCancelled && (
                           <button
                             onClick={() =>
@@ -221,7 +228,10 @@ const MyOrders = () => {
                             }
                             className="text-red-600 hover:underline"
                           >
-                            Cancel
+                          
+                                                        <CircleX />
+
+                          
                           </button>
                         )}
                     </td>

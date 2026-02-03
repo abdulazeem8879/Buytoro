@@ -10,8 +10,11 @@ import ProductCard from "../components/ProductCard";
 
 const ProductDetail = () => {
   const { addToCart } = useContext(CartContext);
-  const { toggleWishlist, isInWishlist } =
-    useContext(WishlistContext);
+  const wishlistContext = useContext(WishlistContext);
+
+const toggleWishlist = wishlistContext?.toggleWishlist;
+const isInWishlist = wishlistContext?.isInWishlist;
+
   const { user } = useContext(AuthContext);
   const { showAlert } = useAlert();
 
@@ -65,16 +68,24 @@ const ProductDetail = () => {
   if (error) return <p className="text-red-500">{error}</p>;
   if (!product) return null;
 
-  const inWishlist = isInWishlist(product._id);
+const inWishlist = isInWishlist
+  ? isInWishlist(product._id)
+  : false;
 
-  const wishlistHandler = () => {
-    if (!user) {
-      showAlert("Please login to use wishlist", "warning");
-      return;
-    }
+ const wishlistHandler = () => {
+  if (!user) {
+    showAlert("Please login to use wishlist", "warning");
+    return;
+  }
 
-    toggleWishlist(product._id);
-  };
+  if (!toggleWishlist) {
+    showAlert("Wishlist not available", "error");
+    return;
+  }
+
+  toggleWishlist(product._id);
+};
+
 
   return (
     <div className="space-y-16">

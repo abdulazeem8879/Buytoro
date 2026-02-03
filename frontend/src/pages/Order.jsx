@@ -34,6 +34,14 @@ const Order = () => {
     fetchOrder();
   }, [id, navigate, showAlert]);
 
+  // ✅ SAME LOGIC AS MyOrders
+  const getPaidLabel = () => {
+    if (order.isPaid) return "Paid";
+    if (order.paymentMethod === "COD" && order.isDelivered)
+      return "Paid (COD)";
+    return "Not Paid";
+  };
+
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center text-gray-800 dark:text-gray-200">
@@ -74,12 +82,12 @@ const Order = () => {
           <div className="mt-4 flex flex-wrap gap-3">
             <span
               className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                order.isPaid
+                getPaidLabel().startsWith("Paid")
                   ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
                   : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
               }`}
             >
-              {order.isPaid ? "Paid" : "Not Paid"}
+              {getPaidLabel()}
             </span>
 
             <span
@@ -98,6 +106,15 @@ const Order = () => {
                 : "Pending Delivery"}
             </span>
           </div>
+
+          {order.isDelivered && order.deliveredAt && (
+            <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
+              Delivered on{" "}
+              <span className="font-medium">
+                {new Date(order.deliveredAt).toLocaleDateString()}
+              </span>
+            </p>
+          )}
         </div>
 
         {/* ===== SHIPPING ===== */}
@@ -125,11 +142,15 @@ const Order = () => {
                 key={item._id}
                 className="flex items-center gap-4 py-4"
               >
+           <Link to={`/product/${item._id}`} >
+           
                 <img
                   src={item.image}
                   alt={item.productName}
                   className="w-16 h-16 object-cover rounded-xl border dark:border-gray-700"
                 />
+           
+           </Link>
 
                 <div className="flex-1">
                   <p className="font-medium text-gray-900 dark:text-gray-100">

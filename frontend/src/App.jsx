@@ -42,7 +42,7 @@ import Wishlist from "./pages/Wishlist";
 
 const App = () => {
   return (
-    <ThemeProvider>
+    
       <Routes>
         {/* public + protected user routes */}
         <Route element={<MainLayout />}>
@@ -155,7 +155,7 @@ const App = () => {
           <Route path="users" element={<AdminUsers />} />
         </Route>
       </Routes>
-    </ThemeProvider>
+  
   );
 };
 

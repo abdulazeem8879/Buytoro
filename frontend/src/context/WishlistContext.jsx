@@ -28,13 +28,18 @@ const WishlistProvider = ({ children }) => {
     );
   };
 
-  // 🔁 TOGGLE (BEST)
+  // 🔁 TOGGLE
   const toggleWishlist = (productId) => {
     setWishlist((prev) =>
       prev.includes(productId)
         ? prev.filter((id) => id !== productId)
         : [...prev, productId]
     );
+  };
+
+  // ✅ MISSING FUNCTION (THIS WAS THE BUG)
+  const isInWishlist = (productId) => {
+    return wishlist.includes(productId);
   };
 
   return (
@@ -44,6 +49,7 @@ const WishlistProvider = ({ children }) => {
         addToWishlist,
         removeFromWishlist,
         toggleWishlist,
+        isInWishlist, // ✅ NOW AVAILABLE
       }}
     >
       {children}

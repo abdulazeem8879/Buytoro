@@ -82,7 +82,9 @@ const Profile = () => {
 
           <div>
             <h1 className="text-2xl font-bold">{user.name}</h1>
-            <p className="text-gray-600 dark:text-gray-400">{user.email}</p>
+<p className="text-gray-600 dark:text-gray-400 break-all max-w-full text-sm">
+  {user.email}
+</p>
 
             <span
               className="inline-block mt-2 px-3 py-1 text-sm rounded-full

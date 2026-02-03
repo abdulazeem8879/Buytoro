@@ -90,6 +90,24 @@ const AdminOrderList = () => {
     }
   };
 
+
+
+
+  // ✅ NEW: MARK AS DELIVERED
+  const markAsDelivered = async (id) => {
+    if (!window.confirm("Mark this order as delivered?")) return;
+
+    try {
+      const { data } = await api.put(`/orders/${id}/deliver`);
+      setOrders((prev) =>
+        prev.map((o) => (o._id === id ? data : o))
+      );
+      showAlert("Order marked as delivered", "success");
+    } catch {
+      showAlert("Failed to update delivery status", "error");
+    }
+  };
+
   if (loading)
     return <p className="p-6">Loading orders...</p>;
 
@@ -190,12 +208,21 @@ const AdminOrderList = () => {
                   </Link>
 
                   {!o.isDelivered && !o.isCancelled && (
-                    <button
-                      onClick={() => cancelOrder(o._id)}
-                      className="text-orange-600 hover:underline"
-                    >
-                      Cancel
-                    </button>
+                    <>
+                      <button
+                        onClick={() => markAsDelivered(o._id)}
+                        className="text-green-600 hover:underline"
+                      >
+                        Deliver
+                      </button>
+
+                      <button
+                        onClick={() => cancelOrder(o._id)}
+                        className="text-orange-600 hover:underline"
+                      >
+                        Cancel
+                      </button>
+                    </>
                   )}
 
                   <button
@@ -258,12 +285,21 @@ const AdminOrderList = () => {
               </Link>
 
               {!o.isDelivered && !o.isCancelled && (
-                <button
-                  onClick={() => cancelOrder(o._id)}
-                  className="text-orange-600 hover:underline"
-                >
-                  Cancel
-                </button>
+                <>
+                  <button
+                    onClick={() => markAsDelivered(o._id)}
+                    className="text-green-600 hover:underline"
+                  >
+                    Deliver
+                  </button>
+
+                  <button
+                    onClick={() => cancelOrder(o._id)}
+                    className="text-orange-600 hover:underline"
+                  >
+                    Cancel
+                  </button>
+                </>
               )}
 
               <button
