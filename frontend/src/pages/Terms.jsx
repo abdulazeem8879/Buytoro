@@ -1,3 +1,4 @@
+
 const Terms = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
@@ -5,6 +6,7 @@ const Terms = () => {
         <h1 className="text-3xl font-bold mb-6 border-b pb-3">
           Terms & Conditions
         </h1>
+
 
         <p className="text-gray-700 mb-6 leading-relaxed">
           By using <span className="font-semibold">BuyToro</span>, you agree to the
