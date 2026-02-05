@@ -1,12 +1,10 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../services/api";
-import { AuthContext } from "../context/AuthContext";
 import { useAlert } from "../context/AlertContext";
+import emailjs from "@emailjs/browser";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
   const { showAlert } = useAlert();
 
   const [name, setName] = useState("");
@@ -15,8 +13,15 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const generateOTP = () =>
+    Math.floor(100000 + Math.random() * 900000).toString();
+
   const submitHandler = async (e) => {
     e.preventDefault();
+
+
+
+
 
     if (password !== confirmPassword) {
       showAlert("Passwords do not match", "error");
@@ -26,134 +31,87 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const { data } = await api.post("/users/register", {
-        name,
-        email,
-        password,
-      });
+      const otp = generateOTP();
 
-      login(data);
-      showAlert("Account created successfully", "success");
-      navigate("/");
-    } catch (err) {
-      showAlert(
-        err.response?.data?.message || "Registration failed",
-        "error"
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          email,
+          passcode: otp,
+          time: "15 minutes",
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
+
+      // TEMP STORE (frontend only)
+      localStorage.setItem("otp", otp);
+      localStorage.setItem("otp_email", email);
+      localStorage.setItem("otp_name", name);
+      localStorage.setItem("otp_password", password);
+
+      showAlert("OTP sent to your email", "success");
+      navigate("/verify-otp");
+    } catch (error) {
+      console.error(error);
+      showAlert("Failed to send OTP", "error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4
-      bg-gray-100 dark:bg-black transition-colors">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-gray-100 dark:bg-black">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 border rounded-2xl p-6 space-y-6">
+        <h1 className="text-3xl font-bold text-center">Create Account</h1>
 
-      <div className="w-full max-w-md
-        bg-white dark:bg-gray-900
-        border border-gray-200 dark:border-gray-800
-        rounded-2xl shadow-xl
-        p-6 md:p-8 space-y-6">
+        <form onSubmit={submitHandler} className="space-y-4">
+          <input
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="w-full px-4 py-2 border rounded"
+          />
 
-        <h1 className="text-3xl font-extrabold text-center">
-          Create Account
-        </h1>
+          <input
+            placeholder="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full px-4 py-2 border rounded"
+          />
 
-        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-          Sign up to start shopping
-        </p>
+          <input
+            placeholder="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full px-4 py-2 border rounded"
+          />
 
-        <form onSubmit={submitHandler} className="space-y-5">
+          <input
+            placeholder="Confirm Password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            className="w-full px-4 py-2 border rounded"
+          />
 
-          {/* NAME */}
-          <div>
-            <label className="block mb-1 font-medium">
-              Full Name
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full px-4 py-2 rounded-xl
-                bg-transparent
-                border border-gray-300 dark:border-gray-700
-                focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
-            />
-          </div>
-
-          {/* EMAIL */}
-          <div>
-            <label className="block mb-1 font-medium">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 rounded-xl
-                bg-transparent
-                border border-gray-300 dark:border-gray-700
-                focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
-            />
-          </div>
-
-          {/* PASSWORD */}
-          <div>
-            <label className="block mb-1 font-medium">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 rounded-xl
-                bg-transparent
-                border border-gray-300 dark:border-gray-700
-                focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
-            />
-          </div>
-
-          {/* CONFIRM PASSWORD */}
-          <div>
-            <label className="block mb-1 font-medium">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 rounded-xl
-                bg-transparent
-                border border-gray-300 dark:border-gray-700
-                focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
-            />
-          </div>
-
-          {/* BUTTON */}
           <button
-            type="submit"
             disabled={loading}
-            className={`w-full py-2.5 rounded-xl font-semibold transition
-              ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
-              }`}
+            className="w-full bg-black text-white py-2 rounded"
           >
-            {loading ? "Creating Account..." : "Register"}
+            {loading ? "Sending OTP..." : "Register"}
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-center text-sm">
           Already have an account?{" "}
-          <Link
-            to="/login"
-            className="font-semibold hover:underline"
-          >
+          <Link to="/login" className="font-semibold underline">
             Login
           </Link>
         </p>

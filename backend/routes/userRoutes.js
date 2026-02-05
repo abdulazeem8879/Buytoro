@@ -1,54 +1,56 @@
-import express from "express";
-import {
-  registerUser,
-  loginUser,
-  getUserProfile,
-  updateUserProfile,
-  changePassword,
-  getAllUsers,
-  getWishlist,
-  toggleWishlist,
+   import express from "express";
+   import {
+   registerUser,
+   loginUser,
+   getUserProfile,
+   updateUserProfile,
+   changePassword,
+   getAllUsers,
+   getWishlist,
+   toggleWishlist,
+   verifyOtp,
 
-} from "../controllers/userController.js";
+   } from "../controllers/userController.js";
 
-import { protect, admin } from "../middlewares/authMiddleware.js";
-import { uploadProfileImage } from "../middlewares/uploadMiddleware.js";
+   import { protect, admin } from "../middlewares/authMiddleware.js";
+   import { uploadProfileImage } from "../middlewares/uploadMiddleware.js";
 
-const userRouter = express.Router();
+   const userRouter = express.Router();
 
-/* ===========================
-   AUTH
-   =========================== */
-userRouter.post("/register", registerUser);
-userRouter.post("/login", loginUser);
+   /* ===========================
+      AUTH
+      =========================== */
+   userRouter.post("/register", registerUser);
+   userRouter.post("/verify-otp", verifyOtp);
+   userRouter.post("/login", loginUser);
 
-/* ===========================
-   PROFILE
-   =========================== */
+   /* ===========================
+      PROFILE
+      =========================== */
 
-// GET logged-in user profile
-userRouter.get("/profile", protect, getUserProfile);
+   // GET logged-in user profile
+   userRouter.get("/profile", protect, getUserProfile);
 
-// UPDATE profile (name + profile image)
-userRouter.put(
-  "/profile",
-  protect,
-  uploadProfileImage,
-  updateUserProfile
-);
+   // UPDATE profile (name + profile image)
+   userRouter.put(
+   "/profile",
+   protect,
+   uploadProfileImage,
+   updateUserProfile
+   );
 
-// CHANGE PASSWORD
-userRouter.put("/change-password", protect, changePassword);
+   // CHANGE PASSWORD
+   userRouter.put("/change-password", protect, changePassword);
 
 
-userRouter.post("/wishlist/:productId", protect, toggleWishlist);
-userRouter.get("/wishlist", protect, getWishlist);
+   userRouter.post("/wishlist/:productId", protect, toggleWishlist);
+   userRouter.get("/wishlist", protect, getWishlist);
 
-/* ===========================
-   ADMIN
-   =========================== */
+   /* ===========================
+      ADMIN
+      =========================== */
 
-// GET all users (ADMIN ONLY)
-userRouter.get("/", protect, admin, getAllUsers);
+   // GET all users (ADMIN ONLY)
+   userRouter.get("/", protect, admin, getAllUsers);
 
-export default userRouter;
+   export default userRouter;

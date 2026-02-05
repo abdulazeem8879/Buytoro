@@ -39,6 +39,7 @@ import AdminUsers from "./admin/pages/AdminUsers";
 // 🔥 THEME CONTEXT (NEXT STEP ME FILE AAYEGI)
 import { ThemeProvider } from "./context/ThemeContext";
 import Wishlist from "./pages/Wishlist";
+import VerifyOtp from "./pages/VerifyOtp";
 
 const App = () => {
   return (
@@ -54,6 +55,7 @@ const App = () => {
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
+<Route path="/verify-otp" element={<VerifyOtp />} />
 
           {/* protected routes */}
           <Route

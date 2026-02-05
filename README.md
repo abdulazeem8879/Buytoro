@@ -3,46 +3,6 @@
 
 
 
-// import mongoose from "mongoose";
-
-// const productSchema = new mongoose.Schema(
-//   {
-//     name: {
-//       type: String,
-//       required: true,
-//       trim: true,
-//     },
-
-//     brand: {
-//       type: String,
-//       required: true,
-//     },
-
-//     price: {
-//       type: Number,
-//       required: true,
-//     },
-
-//     description: {
-//       type: String,
-//     },
-
-//   images: [
-//     {
-//       url: { type: String, required: true },
-//       public_id: { type: String, required: true },
-//     },
-//   ],
-
-//  inStock: { type: Boolean, default: true },
-
-//   countInStock: { type: Number, default: 0 },
-//   },
-//   {
-//     timestamps: true, // createdAt, updatedAt
-//   }
-// );
-
-// const product = mongoose.model("Product", productSchema);
-
-// export default product;
+email service id : service_f4h6gdm
+template id : template_6g9w8d7
+public key : b6TBl8QJ_Uyj7iq8H
