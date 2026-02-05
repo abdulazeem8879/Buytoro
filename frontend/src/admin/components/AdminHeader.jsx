@@ -4,8 +4,9 @@ import { Menu, ArrowLeft } from "lucide-react";
 const AdminHeader = ({ onMenuClick }) => {
   return (
     <header className="flex items-center justify-between px-6 py-4 border-b
-      bg-white dark:bg-gray-900
-      border-gray-200 dark:border-gray-800"
+  bg-white dark:bg-gray-900
+  border-gray-200 dark:border-gray-800
+  sticky top-0 z-30"
     >
       {/* LEFT SIDE */}
       <div className="flex items-center gap-3">

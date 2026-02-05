@@ -8,6 +8,7 @@ import {
   X,
   ArrowLeft,
   LogOut,
+  ShieldUser,
 } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext";
 const AdminSidebar = ({ isOpen, onClose }) => {
@@ -44,19 +45,20 @@ const AdminSidebar = ({ isOpen, onClose }) => {
 
   return (
     <aside
-      className={`
-        fixed md:static z-40
-        top-0 left-0
-        h-screen w-64
-        bg-white dark:bg-gray-900
-        text-gray-800 dark:text-gray-100
-        p-6
-        border-r border-gray-200 dark:border-gray-800
-        transform transition-transform duration-300
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0
-        flex flex-col
-      `}
+className={`
+  fixed md:static z-40
+  top-0 left-0
+  h-screen w-64
+  bg-white dark:bg-gray-900
+  text-gray-800 dark:text-gray-100
+  border-r border-gray-200 dark:border-gray-800
+  transform transition-transform duration-300
+  ${isOpen ? "translate-x-0" : "-translate-x-full"}
+  md:translate-x-0
+  flex flex-col
+  overflow-hidden
+`}
+
     >
       {/* MOBILE CLOSE */}
       <div className="md:hidden flex justify-end mb-4">
@@ -69,8 +71,8 @@ const AdminSidebar = ({ isOpen, onClose }) => {
       </div>
 
       {/* TITLE */}
-      <h2 className="text-2xl font-bold mb-10 text-center tracking-wide">
-        🛠 Admin Panel
+      <h2 className="text-2xl font-bold mb-10 text-center tracking-wide flex items-center justify-center gap-2">
+        <ShieldUser /> Admin Panel
       </h2>
 
       {/* NAV LINKS */}

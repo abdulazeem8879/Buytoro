@@ -13,10 +13,10 @@ const AdminLayout = () => {
 
   return (
     <div
-      className="min-h-screen flex
-        bg-gray-100 dark:bg-gray-900
-        text-gray-900 dark:text-gray-100
-        transition-colors duration-300"
+     className="h-screen flex overflow-hidden
+    bg-gray-100 dark:bg-gray-900
+    text-gray-900 dark:text-gray-100
+    transition-colors duration-300"
     >
       {/* MOBILE OVERLAY */}
       {sidebarOpen && (
@@ -39,7 +39,7 @@ const AdminLayout = () => {
         <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
 
         {/* PAGE CONTENT */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-6 overflow-y-auto">
           <Outlet />
         </div>
       </div>
@@ -48,3 +48,5 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
+
+
