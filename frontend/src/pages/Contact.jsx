@@ -1,5 +1,4 @@
 import { useState } from "react";
-import emailjs from "@emailjs/browser";
 import { useAlert } from "../context/AlertContext";
 import { Mail, User, MessageSquare } from "lucide-react";
 

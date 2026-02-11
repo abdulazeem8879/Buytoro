@@ -9,6 +9,8 @@
    getWishlist,
    toggleWishlist,
    verifyOtp,
+   resendOtp,
+   
 
    } from "../controllers/userController.js";
 
@@ -21,7 +23,8 @@
       AUTH
       =========================== */
    userRouter.post("/register", registerUser);
-   userRouter.post("/verify-otp", verifyOtp);
+   userRouter.post('/verify-otp',verifyOtp)
+   userRouter.post("/resend-otp", resendOtp); // Reuse resendOtp route
    userRouter.post("/login", loginUser);
 
    /* ===========================
