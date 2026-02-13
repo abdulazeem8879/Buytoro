@@ -1,67 +1,6 @@
 @import "tailwindcss";
 
-/* ✅ REQUIRED for class-based dark mode in Tailwind v4 */
-/* @custom-variant dark (&:where(.dark, .dark *)); */
+ @custom-variant dark (&:where(.dark, .dark *));
 
 
 
-/* ===== OTP WAITING BOY ANIMATION ===== */
-/* @keyframes waitLook {
-  0% {
-    transform: translateY(0) rotate(0deg);
-  }
-  40% {
-    transform: translateY(-4px) rotate(-2deg);
-  }
-  60% {
-    transform: translateY(-4px) rotate(2deg);
-  }
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-}
-
-.animate-wait {
-  animation: waitLook 2.5s ease-in-out infinite;
-} */
-
-
-/* ===== BOY WALK IN FROM LEFT ===== */
-/* @keyframes boyEnter {
-  0% {
-    transform: translateX(-120px);
-    opacity: 0;
-  }
-  60% {
-    transform: translateX(20px);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
-.animate-boy-enter {
-  animation: boyEnter 1s ease-out forwards;
-} */
-
-/* ===== LEAN + WATCH LOOK ===== */
-/* @keyframes boyWatch {
-  0% {
-    transform: rotate(0deg);
-  }
-  40% {
-    transform: rotate(-4deg);
-  }
-  60% {
-    transform: rotate(-4deg);
-  }
-  100% {
-    transform: rotate(0deg);
-  }
-}
-
-.animate-boy-watch {
-  animation: boyWatch 2.8s ease-in-out infinite;
-  transform-origin: bottom center;
-} */
