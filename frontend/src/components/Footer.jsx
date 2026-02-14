@@ -4,15 +4,13 @@ import { Facebook, Instagram, Twitter, Linkedin, Check } from "lucide-react";
 const Footer = () => {
   return (
     <footer className="mt-16 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-black text-slate-600 dark:text-slate-400">
-
       {/* ===== TOP SECTION ===== */}
       <div className="max-w-7xl mx-auto px-6 py-14 grid gap-10 sm:grid-cols-2 md:grid-cols-4">
-
         {/* BRAND */}
         <div className="space-y-3">
           <Link
-  to="/"
-  className="
+            to="/"
+            className="
     inline-block text-3xl font-extrabold tracking-tight
     bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-500
     bg-clip-text text-transparent
@@ -22,14 +20,11 @@ const Footer = () => {
 
     transition-all duration-300 ease-out
   "
->
-  BuyToro
-</Link>
+          >
+            BuyToro
+          </Link>
 
-
-          <p className="text-sm">
-            A premium watch e-commerce platform.
-          </p>
+          <p className="text-sm">A premium watch e-commerce platform.</p>
 
           <p className="text-sm">
             Designed & Developed by{" "}
@@ -152,6 +147,25 @@ const Footer = () => {
                          transition-all duration-200"
             >
               <Linkedin size={18} />
+            </a>
+            <a
+             
+            >
+              <svg  
+
+
+
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-google hover:text-yellow-500
+                         hover:-translate-y-1
+                         transition-all duration-200"
+                viewBox="0 0 16 16"
+              >
+                <path d="M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z" />
+              </svg>
             </a>
           </div>
         </div>

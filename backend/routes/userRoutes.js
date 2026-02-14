@@ -10,6 +10,8 @@
    toggleWishlist,
    verifyOtp,
    resendOtp,
+   sendContactMessage,
+   deleteAccount,
    
 
    } from "../controllers/userController.js";
@@ -33,6 +35,9 @@
 
    // GET logged-in user profile
    userRouter.get("/profile", protect, getUserProfile);
+   userRouter.delete("/profile", protect, deleteAccount);
+
+   userRouter.post("/contact", protect, sendContactMessage)
 
    // UPDATE profile (name + profile image)
    userRouter.put(

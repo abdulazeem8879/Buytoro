@@ -26,7 +26,6 @@ import AdminLayout from "./admin/AdminLayout";
 import Profile from "./pages/profile/Profile";
 import EditProfile from "./pages/profile/EditProfile";
 import ChangePassword from "./pages/profile/ChangePassword";
-import Security from "./pages/profile/Security";
 
 // admin pages
 import AdminDashboard from "./admin/pages/AdminDashboard";
@@ -91,14 +90,7 @@ const App = () => {
             }
           />
 
-          <Route
-            path="/profile/security"
-            element={
-              <ProtectedRoute>
-                <Security />
-              </ProtectedRoute>
-            }
-          />
+         
 
           <Route
             path="/checkout"
