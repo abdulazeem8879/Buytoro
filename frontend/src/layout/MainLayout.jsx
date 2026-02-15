@@ -6,7 +6,7 @@ const MainLayout = () => {
   const location = useLocation();
 
   // routes jahan Navbar / Footer hide honge
-  const hideLayoutRoutes = ["/login", "/register"];
+  const hideLayoutRoutes = ["/login", "/register","/forgot-password"];
   const shouldHideLayout = hideLayoutRoutes.includes(location.pathname);
 
   return (

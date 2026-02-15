@@ -214,23 +214,31 @@ const [deletePassword, setDeletePassword] = useState("");
 
         {/* ===== EDIT PROFILE ===== */}
         <div className="p-6 rounded-xl bg-white dark:bg-gray-900 shadow">
-          <h2 className="text-lg font-semibold mb-4">Edit Profile</h2>
+  <h2 className="text-lg font-semibold mb-4">Edit Profile</h2>
 
-          <div className="flex gap-3">
-            <Link
-              to="/profile/edit"
-              className="px-4 py-2 rounded bg-blue-600 text-white text-sm"
-            >
-              Edit Name / Picture
-            </Link>
-            <Link
-              to="/profile/change-password"
-              className="px-4 py-2 rounded bg-gray-700 text-white text-sm"
-            >
-              Change Password
-            </Link>
-          </div>
-        </div>
+  <div className="flex gap-3">
+    <Link
+      to="/profile/edit"
+      className="px-4 py-2 rounded bg-blue-600 text-white text-sm"
+    >
+      Edit Name / Picture
+    </Link>
+    <Link
+      to="/profile/change-password"
+      className="px-4 py-2 rounded bg-gray-700 text-white text-sm"
+    >
+      Change Password
+    </Link>
+    
+    {/* Forgot Password Button */}
+    <Link
+      to="/forgot-password"
+      className="px-4 py-2 rounded bg-red-600 text-white text-sm"
+    >
+      Forgot Password?
+    </Link>
+  </div>
+</div>
 
         {/* ===== SECURITY ===== */}
         <div className="p-6 rounded-xl bg-white dark:bg-gray-900 shadow">

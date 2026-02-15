@@ -37,10 +37,18 @@ import AdminUsers from "./admin/pages/AdminUsers";
 
 // 🔥 THEME CONTEXT (NEXT STEP ME FILE AAYEGI)
 import Wishlist from "./pages/Wishlist";
+import ScrollToTop from "./components/ScrollToTop";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const App = () => {
   return (
+
+    <>
     
+    
+
+            <ScrollToTop />
+
       <Routes>
         {/* public + protected user routes */}
         <Route element={<MainLayout />}>
@@ -52,6 +60,7 @@ const App = () => {
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* protected routes */}
           <Route
@@ -146,6 +155,9 @@ const App = () => {
           <Route path="users" element={<AdminUsers />} />
         </Route>
       </Routes>
+    
+    
+    </>
   
   );
 };

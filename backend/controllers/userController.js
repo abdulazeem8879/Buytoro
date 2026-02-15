@@ -387,6 +387,138 @@ export const changePassword = async (req, res, next) => {
   }
 };
 
+
+// ===========================
+// FORGOT PASSWORD (OTP)
+// ===========================
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // 1️⃣ Check user exists
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // 2️⃣ Generate 6 digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // 3️⃣ Hash OTP
+    const hashedOtp = await hashPasword(otp);
+
+    // 4️⃣ Save hashed OTP + expiry (10 minutes)
+    user.resetPasswordToken = hashedOtp;
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
+
+    await user.save();
+
+    // 5️⃣ Send OTP via email
+    await sendEmail({
+  to: user.email,
+  subject: "Password Reset OTP",
+  html: `<h3>Your OTP for password reset is:</h3>
+         <h2>${otp}</h2>
+         <p>This OTP will expire in 10 minutes.</p>`
+});
+
+
+    res.status(200).json({ message: "Reset OTP sent to email" });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// ===========================
+// VERIFY RESET OTP
+// ===========================
+
+export const verifyResetOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user || !user.resetPasswordToken) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+
+    // 1️⃣ Check expiry
+    if (user.resetPasswordExpires < Date.now()) {
+      return res.status(400).json({ message: "OTP expired" });
+    }
+
+    // 2️⃣ Compare OTP
+    const isMatch = await comparePassword(
+      otp,
+      user.resetPasswordToken
+    );
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+
+// ✅ Mark as verified
+user.isResetVerified = true;
+await user.save();
+
+    res.status(200).json({ message: "OTP verified successfully" });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// ===========================
+// RESET PASSWORD
+// ===========================
+
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    const user = await User.findOne({ email });
+
+   if (
+  !user ||
+  !user.resetPasswordToken ||
+  user.isResetVerified !== true
+) {
+  return res.status(400).json({ message: "Unauthorized request" });
+}
+
+
+    // Hash new password
+    const hashedPassword = await hashPasword(newPassword);
+    user.password = hashedPassword;
+
+    // Clear reset fields
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    user.isResetVerified = false;
+
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+
 /* ===========================
    DELETE ACCOUNT
    =========================== */
